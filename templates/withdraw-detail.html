@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}Chick Pay - 출금 완료{% endblock %}
+
+{% block content %}
+
+<main class="container mx-auto px-4 py-10 flex-grow">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex items-center mb-8">
+            <a href="withdraw.html" class="text-chick-brown hover:underline flex items-center">
+                <span class="mr-2">←</span> 출금 페이지로 돌아가기
+            </a>
+        </div>
+
+        <div class="bg-white rounded-3xl p-8 shadow-lg mb-8">
+            <h2 class="text-2xl font-bold text-chick-brown mb-6 flex items-center">
+                <span class="text-3xl mr-3">💸</span> 출금 상세 정보
+            </h2>
+
+            <div
+                class="bg-gradient-to-r from-chick-yellow to-chick-orange rounded-2xl p-6 text-chick-brown shadow-md mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-bold text-xl">KB국민은행</span>
+                    <span class="text-3xl">🏦</span>
+                </div>
+                <div class="text-2xl font-bold mb-2">123-456-789012</div>
+                <div class="flex justify-between items-center">
+                    <span class="text-lg">김병아리</span>
+                    <span class="font-bold text-3xl">₩ 1,250,000</span>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-chick-brown mb-4">출금 내역</h3>
+
+                <div class="bg-chick-light rounded-xl p-6 mb-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-bold">출금 금액</span>
+                        <span class="text-2xl font-bold text-chick-brown">₩ 300,000</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span>출금 방법</span>
+                        <span>계좌 이체</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span>출금 일시</span>
+                        <span>2025년 4월 2일 14:30</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span>거래 ID</span>
+                        <span class="text-gray-500 text-sm">WD2025040212345</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>상태</span>
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">완료</span>
+                    </div>
+                </div>
+
+                <div class="bg-chick-light rounded-xl p-6">
+                    <h4 class="font-bold mb-3">출금 계좌 정보</h4>
+                    <div class="flex justify-between items-center mb-2">
+                        <span>은행</span>
+                        <span>신한은행</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span>계좌번호</span>
+                        <span>110-123-456789</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>예금주</span>
+                        <span>김병아리</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-6">
+                <h3 class="text-xl font-bold text-chick-brown mb-4">출금 후 잔액</h3>
+                <div class="flex justify-between items-center">
+                    <span>이전 잔액</span>
+                    <span>₩ 1,250,000</span>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span>출금 금액</span>
+                    <span class="text-red-500">- ₩ 300,000</span>
+                </div>
+                <div class="flex justify-between items-center font-bold text-lg">
+                    <span>현재 잔액</span>
+                    <span class="text-chick-brown">₩ 950,000</span>
+                </div>
+            </div>
+
+            <div class="mt-8 flex flex-wrap gap-3 justify-center">
+                <a href="withdraw.html"
+                    class="bg-chick-brown text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-opacity-90 transition">
+                    새 출금 요청
+                </a>
+                <a href="account.html"
+                    class="bg-white text-chick-brown px-6 py-3 rounded-xl text-sm font-medium border-2 border-chick-brown hover:bg-chick-light transition">
+                    계좌 목록으로
+                </a>
+                <button
+                    class="bg-white text-gray-600 px-6 py-3 rounded-xl text-sm font-medium border-2 border-gray-300 hover:bg-gray-100 transition">
+                    영수증 다운로드
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-8 shadow-lg">
+            <h3 class="text-xl font-bold text-chick-brown mb-6">최근 출금 내역</h3>
+
+            <div class="space-y-4">
+                <div class="flex justify-between items-center p-4 border-b border-gray-100">
+                    <div>
+                        <div class="font-medium">신한은행</div>
+                        <div class="text-sm text-gray-500">2025년 3월 28일</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold text-red-500">- ₩ 150,000</div>
+                        <div class="text-sm text-gray-500">계좌 이체</div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center p-4 border-b border-gray-100">
+                    <div>
+                        <div class="font-medium">우리은행</div>
+                        <div class="text-sm text-gray-500">2025년 3월 15일</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold text-red-500">- ₩ 200,000</div>
+                        <div class="text-sm text-gray-500">계좌 이체</div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center p-4">
+                    <div>
+                        <div class="font-medium">하나은행</div>
+                        <div class="text-sm text-gray-500">2025년 3월 5일</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold text-red-500">- ₩ 100,000</div>
+                        <div class="text-sm text-gray-500">계좌 이체</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 text-center">
+                <a href="#" class="text-chick-brown hover:underline text-sm">모든 출금 내역 보기</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="bg-chick-yellow py-6 text-center mt-8"></footer>
+
+<!-- common.js 스크립트 추가 -->
+<script src="common.js"></script>
+{% endblock %}

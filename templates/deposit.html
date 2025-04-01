@@ -1,469 +1,305 @@
-<!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chick Pay - 입금하기</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              "chick-yellow": "#FFDE59",
-              "chick-orange": "#FFC93C",
-              "chick-brown": "#B85C38",
-              "chick-light": "#FFF9E5",
-            },
-          },
-        },
-      };
-    </script>
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap");
-      body {
-        font-family: "Noto Sans KR", sans-serif;
-      }
-    </style>
-  </head>
-  <body
-    class="bg-chick-light text-gray-800 leading-relaxed min-h-screen flex flex-col"
-  >
-    <header class="bg-chick-yellow py-5 shadow-md">
-      <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between">
-          <a href="index.html" class="flex items-center gap-3">
-            <div class="text-4xl">🐥</div>
-            <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
-          </a>
-          <nav class="hidden md:flex items-center gap-6">
-            <a
-              href="account.html"
-              class="text-chick-brown font-medium hover:underline"
-              >계좌조회</a
-            >
-            <a
-              href="transfer.html"
-              class="text-chick-brown font-medium hover:underline"
-              >송금하기</a
-            >
-            <a
-              href="deposit.html"
-              class="text-chick-brown font-medium hover:underline"
-              >입금하기</a
-            >
-            <a
-              href="withdraw.html"
-              class="text-chick-brown font-medium hover:underline"
-              >출금하기</a
-            >
-            <a
-              href="mypage.html"
-              class="text-chick-brown font-medium hover:underline"
-              >마이페이지</a
-            >
-            <a
-              href="login.html"
-              class="text-chick-brown font-medium hover:underline"
-              >로그아웃</a
-            >
-          </nav>
-          <button class="md:hidden text-2xl">☰</button>
+{% extends 'base.html' %}
+{% block title %}Chick Pay - 입금하기{% endblock %}
+
+{% block content %}
+<main class="container mx-auto px-4 py-10 flex-grow">
+  <div class="max-w-2xl mx-auto">
+    <h2 class="text-3xl font-bold text-chick-brown mb-8 text-center">
+      입금하기
+    </h2>
+
+    <div class="bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow">
+      <form id="deposit-form">
+        <div class="mb-6">
+          <label for="to-account" class="block mb-2 font-semibold text-gray-600">입금 계좌</label>
+          <select id="to-account" required
+            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+            <option value="" disabled selected>
+              입금 계좌를 선택하세요
+            </option>
+            <option value="kb">
+              KB국민은행 123-456-789012 (잔액: ₩1,250,000)
+            </option>
+            <option value="shinhan">
+              신한은행 987-654-321098 (잔액: ₩3,750,000)
+            </option>
+            <option value="hana">
+              하나은행 111-222-333444 (잔액: ₩850,000)
+            </option>
+          </select>
         </div>
-      </div>
-    </header>
 
-    <main class="container mx-auto px-4 py-10 flex-grow">
-      <div class="max-w-2xl mx-auto">
-        <h2 class="text-3xl font-bold text-chick-brown mb-8 text-center">
-          입금하기
-        </h2>
-
-        <div
-          class="bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow"
-        >
-          <form id="deposit-form">
-            <div class="mb-6">
-              <label
-                for="to-account"
-                class="block mb-2 font-semibold text-gray-600"
-                >입금 계좌</label
-              >
-              <select
-                id="to-account"
-                required
-                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition"
-              >
-                <option value="" disabled selected>
-                  입금 계좌를 선택하세요
-                </option>
-                <option value="kb">
-                  KB국민은행 123-456-789012 (잔액: ₩1,250,000)
-                </option>
-                <option value="shinhan">
-                  신한은행 987-654-321098 (잔액: ₩3,750,000)
-                </option>
-                <option value="hana">
-                  하나은행 111-222-333444 (잔액: ₩850,000)
-                </option>
-              </select>
-            </div>
-
-            <div class="mb-6">
-              <label
-                for="deposit-method"
-                class="block mb-2 font-semibold text-gray-600"
-                >입금 방법</label
-              >
-              <div class="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  class="bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
-                  onclick="selectDepositMethod('card')"
-                >
-                  <span class="text-2xl">💳</span>
-                  <span>카드 입금</span>
-                </button>
-                <button
-                  type="button"
-                  class="bg-white text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md border-2 border-chick-yellow hover:bg-chick-light transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
-                  onclick="selectDepositMethod('account')"
-                >
-                  <span class="text-2xl">🏦</span>
-                  <span>계좌 입금</span>
-                </button>
-              </div>
-              <input type="hidden" id="deposit-method-input" value="card" />
-            </div>
-
-            <div id="card-deposit-section">
-              <div class="mb-6">
-                <label
-                  for="card-number"
-                  class="block mb-2 font-semibold text-gray-600"
-                  >카드 번호</label
-                >
-                <input
-                  type="text"
-                  id="card-number"
-                  placeholder="0000 0000 0000 0000"
-                  maxlength="19"
-                  required
-                  class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition"
-                />
-              </div>
-
-              <div class="grid grid-cols-2 gap-4 mb-6">
-                <div>
-                  <label
-                    for="expiry-date"
-                    class="block mb-2 font-semibold text-gray-600"
-                    >만료일</label
-                  >
-                  <input
-                    type="text"
-                    id="expiry-date"
-                    placeholder="MM/YY"
-                    maxlength="5"
-                    required
-                    class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition"
-                  />
-                </div>
-                <div>
-                  <label
-                    for="cvv"
-                    class="block mb-2 font-semibold text-gray-600"
-                    >CVV</label
-                  >
-                  <input
-                    type="text"
-                    id="cvv"
-                    placeholder="123"
-                    maxlength="3"
-                    required
-                    class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div id="account-deposit-section" class="hidden">
-              <div class="mb-6">
-                <label
-                  for="from-bank"
-                  class="block mb-2 font-semibold text-gray-600"
-                  >출금 은행</label
-                >
-                <select
-                  id="from-bank"
-                  required
-                  class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition"
-                >
-                  <option value="" disabled selected>
-                    출금 은행을 선택하세요
-                  </option>
-                  <option value="kb">KB국민은행</option>
-                  <option value="shinhan">신한은행</option>
-                  <option value="woori">우리은행</option>
-                  <option value="hana">하나은행</option>
-                  <option value="nh">농협은행</option>
-                  <option value="ibk">기업은행</option>
-                  <option value="kakao">카카오뱅크</option>
-                  <option value="toss">토스뱅크</option>
-                </select>
-              </div>
-
-              <div class="mb-6">
-                <label
-                  for="from-account"
-                  class="block mb-2 font-semibold text-gray-600"
-                  >출금 계좌번호</label
-                >
-                <input
-                  type="text"
-                  id="from-account"
-                  placeholder="계좌번호를 입력하세요 (- 없이)"
-                  required
-                  class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition"
-                />
-              </div>
-
-              <div class="mb-6">
-                <label
-                  for="account-password"
-                  class="block mb-2 font-semibold text-gray-600"
-                  >계좌 비밀번호</label
-                >
-                <input
-                  type="password"
-                  id="account-password"
-                  placeholder="계좌 비밀번호 4자리"
-                  maxlength="4"
-                  required
-                  class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition"
-                />
-              </div>
-            </div>
-
-            <div class="mb-6">
-              <label for="amount" class="block mb-2 font-semibold text-gray-600"
-                >입금 금액</label
-              >
-              <div class="relative">
-                <span class="absolute left-3 top-3 text-gray-500">₩</span>
-                <input
-                  type="number"
-                  id="amount"
-                  placeholder="0"
-                  required
-                  min="1000"
-                  step="1000"
-                  class="w-full p-3 pl-8 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition"
-                />
-              </div>
-            </div>
-
-            <div class="mb-8">
-              <label for="memo" class="block mb-2 font-semibold text-gray-600"
-                >메모 (선택사항)</label
-              >
-              <input
-                type="text"
-                id="memo"
-                placeholder="메모를 입력하세요"
-                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition"
-              />
-            </div>
-
-            <button
-              type="submit"
-              class="w-full bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0"
-            >
-              입금하기 🐥
+        <div class="mb-6">
+          <label for="deposit-method" class="block mb-2 font-semibold text-gray-600">입금 방법</label>
+          <div class="grid grid-cols-2 gap-4">
+            <button type="button"
+              class="bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
+              onclick="selectDepositMethod('card')">
+              <span class="text-2xl">💳</span>
+              <span>카드 입금</span>
             </button>
-          </form>
+            <button type="button"
+              class="bg-white text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md border-2 border-chick-yellow hover:bg-chick-light transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
+              onclick="selectDepositMethod('account')">
+              <span class="text-2xl">🏦</span>
+              <span>계좌 입금</span>
+            </button>
+          </div>
+          <input type="hidden" id="deposit-method-input" value="card" />
         </div>
 
-        <div
-          class="mt-8 bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow"
-        >
-          <h3 class="text-xl font-bold text-chick-brown mb-4">입금 안내</h3>
+        <div id="card-deposit-section">
+          <div class="mb-6">
+            <label for="card-number" class="block mb-2 font-semibold text-gray-600">카드 번호</label>
+            <input type="text" id="card-number" placeholder="0000 0000 0000 0000" maxlength="19" required
+              class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
+          </div>
 
-          <div class="space-y-4 text-gray-600">
-            <div class="flex items-start gap-3">
-              <div class="text-xl text-chick-orange">1️⃣</div>
-              <p>입금하실 계좌를 선택해주세요.</p>
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <label for="expiry-date" class="block mb-2 font-semibold text-gray-600">만료일</label>
+              <input type="text" id="expiry-date" placeholder="MM/YY" maxlength="5" required
+                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
             </div>
-            <div class="flex items-start gap-3">
-              <div class="text-xl text-chick-orange">2️⃣</div>
-              <p>카드 입금 또는 계좌 입금 중 원하시는 방법을 선택해주세요.</p>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="text-xl text-chick-orange">3️⃣</div>
-              <p>입금 정보를 정확히 입력해주세요.</p>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="text-xl text-chick-orange">4️⃣</div>
-              <p>입금 금액을 입력하고 입금하기 버튼을 클릭하세요.</p>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="text-xl text-chick-orange">5️⃣</div>
-              <p>입금이 완료되면 계좌 잔액에 즉시 반영됩니다.</p>
+            <div>
+              <label for="cvv" class="block mb-2 font-semibold text-gray-600">CVV</label>
+              <input type="text" id="cvv" placeholder="123" maxlength="3" required
+                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
             </div>
           </div>
         </div>
+
+        <div id="account-deposit-section" class="hidden">
+          <div class="mb-6">
+            <label for="from-bank" class="block mb-2 font-semibold text-gray-600">출금 은행</label>
+            <select id="from-bank" required
+              class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+              <option value="" disabled selected>
+                출금 은행을 선택하세요
+              </option>
+              <option value="kb">KB국민은행</option>
+              <option value="shinhan">신한은행</option>
+              <option value="woori">우리은행</option>
+              <option value="hana">하나은행</option>
+              <option value="nh">농협은행</option>
+              <option value="ibk">기업은행</option>
+              <option value="kakao">카카오뱅크</option>
+              <option value="toss">토스뱅크</option>
+            </select>
+          </div>
+
+          <div class="mb-6">
+            <label for="from-account" class="block mb-2 font-semibold text-gray-600">출금 계좌번호</label>
+            <input type="text" id="from-account" placeholder="계좌번호를 입력하세요 (- 없이)" required
+              class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
+          </div>
+
+          <div class="mb-6">
+            <label for="account-password" class="block mb-2 font-semibold text-gray-600">계좌 비밀번호</label>
+            <input type="password" id="account-password" placeholder="계좌 비밀번호 4자리" maxlength="4" required
+              class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label for="amount" class="block mb-2 font-semibold text-gray-600">입금 금액</label>
+          <div class="relative">
+            <span class="absolute left-3 top-3 text-gray-500">₩</span>
+            <input type="number" id="amount" placeholder="0" required min="1000" step="1000"
+              class="w-full p-3 pl-8 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <label for="memo" class="block mb-2 font-semibold text-gray-600">메모 (선택사항)</label>
+          <input type="text" id="memo" placeholder="메모를 입력하세요"
+            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
+        </div>
+
+        <button type="submit"
+          class="w-full bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0">
+          입금하기 🐥
+        </button>
+      </form>
+    </div>
+
+    <div class="mt-8 bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow">
+      <h3 class="text-xl font-bold text-chick-brown mb-4">입금 안내</h3>
+
+      <div class="space-y-4 text-gray-600">
+        <div class="flex items-start gap-3">
+          <div class="text-xl text-chick-orange">1️⃣</div>
+          <p>입금하실 계좌를 선택해주세요.</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="text-xl text-chick-orange">2️⃣</div>
+          <p>카드 입금 또는 계좌 입금 중 원하시는 방법을 선택해주세요.</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="text-xl text-chick-orange">3️⃣</div>
+          <p>입금 정보를 정확히 입력해주세요.</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="text-xl text-chick-orange">4️⃣</div>
+          <p>입금 금액을 입력하고 입금하기 버튼을 클릭하세요.</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="text-xl text-chick-orange">5️⃣</div>
+          <p>입금이 완료되면 계좌 잔액에 즉시 반영됩니다.</p>
+        </div>
       </div>
-    </main>
+    </div>
+  </div>
+</main>
 
-    <footer class="bg-chick-yellow py-6 text-center mt-8">
-      <div class="container mx-auto px-4">
-        <p>&copy; 2025 Chick Pay. 모든 권리 보유. 🐥</p>
-      </div>
-    </footer>
+<footer class="bg-chick-yellow py-6 text-center mt-8">
+  <div class="container mx-auto px-4">
+    <p>&copy; 2025 Chick Pay. 모든 권리 보유. 🐥</p>
+  </div>
+</footer>
 
-    <script>
-      // 모바일 메뉴 토글
-      const menuButton = document.querySelector("button");
-      const nav = document.querySelector("nav");
+<script>
+  // 모바일 메뉴 토글
+  const menuButton = document.querySelector("button");
+  const nav = document.querySelector("nav");
 
-      menuButton.addEventListener("click", function () {
-        if (nav.classList.contains("hidden")) {
-          nav.classList.remove("hidden");
-          nav.classList.add(
-            "flex",
-            "flex-col",
-            "absolute",
-            "top-16",
-            "right-4",
-            "bg-white",
-            "p-4",
-            "rounded-xl",
-            "shadow-lg",
-            "z-50"
-          );
-        } else {
-          nav.classList.add("hidden");
-          nav.classList.remove(
-            "flex",
-            "flex-col",
-            "absolute",
-            "top-16",
-            "right-4",
-            "bg-white",
-            "p-4",
-            "rounded-xl",
-            "shadow-lg",
-            "z-50"
-          );
-        }
-      });
+  menuButton.addEventListener("click", function () {
+    if (nav.classList.contains("hidden")) {
+      nav.classList.remove("hidden");
+      nav.classList.add(
+        "flex",
+        "flex-col",
+        "absolute",
+        "top-16",
+        "right-4",
+        "bg-white",
+        "p-4",
+        "rounded-xl",
+        "shadow-lg",
+        "z-50"
+      );
+    } else {
+      nav.classList.add("hidden");
+      nav.classList.remove(
+        "flex",
+        "flex-col",
+        "absolute",
+        "top-16",
+        "right-4",
+        "bg-white",
+        "p-4",
+        "rounded-xl",
+        "shadow-lg",
+        "z-50"
+      );
+    }
+  });
 
-      // 카드 번호 형식 지정
-      document
-        .getElementById("card-number")
-        .addEventListener("input", function (e) {
-          let value = e.target.value.replace(/\s+/g, "");
-          if (value.length > 0) {
-            value = value.match(new RegExp(".{1,4}", "g")).join(" ");
-          }
-          e.target.value = value;
-        });
-
-      // 만료일 형식 지정
-      document
-        .getElementById("expiry-date")
-        .addEventListener("input", function (e) {
-          let value = e.target.value.replace(/\D/g, "");
-          if (value.length > 2) {
-            value = value.substring(0, 2) + "/" + value.substring(2, 4);
-          }
-          e.target.value = value;
-        });
-
-      // CVV 숫자만 입력
-      document.getElementById("cvv").addEventListener("input", function (e) {
-        e.target.value = e.target.value.replace(/\D/g, "");
-      });
-
-      // 계좌번호 숫자만 입력
-      document
-        .getElementById("from-account")
-        .addEventListener("input", function (e) {
-          e.target.value = e.target.value.replace(/\D/g, "");
-        });
-
-      // 계좌 비밀번호 숫자만 입력
-      document
-        .getElementById("account-password")
-        .addEventListener("input", function (e) {
-          e.target.value = e.target.value.replace(/\D/g, "");
-        });
-
-      // 입금 방법 선택
-      function selectDepositMethod(method) {
-        const cardSection = document.getElementById("card-deposit-section");
-        const accountSection = document.getElementById(
-          "account-deposit-section"
-        );
-        const methodInput = document.getElementById("deposit-method-input");
-
-        if (method === "card") {
-          cardSection.classList.remove("hidden");
-          accountSection.classList.add("hidden");
-          methodInput.value = "card";
-
-          // 버튼 스타일 변경
-          document
-            .querySelectorAll("button[onclick]")[0]
-            .classList.add("bg-chick-yellow");
-          document
-            .querySelectorAll("button[onclick]")[0]
-            .classList.remove("bg-white", "border-2", "border-chick-yellow");
-
-          document
-            .querySelectorAll("button[onclick]")[1]
-            .classList.remove("bg-chick-yellow");
-          document
-            .querySelectorAll("button[onclick]")[1]
-            .classList.add("bg-white", "border-2", "border-chick-yellow");
-        } else {
-          cardSection.classList.add("hidden");
-          accountSection.classList.remove("hidden");
-          methodInput.value = "account";
-
-          // 버튼 스타일 변경
-          document
-            .querySelectorAll("button[onclick]")[0]
-            .classList.remove("bg-chick-yellow");
-          document
-            .querySelectorAll("button[onclick]")[0]
-            .classList.add("bg-white", "border-2", "border-chick-yellow");
-
-          document
-            .querySelectorAll("button[onclick]")[1]
-            .classList.add("bg-chick-yellow");
-          document
-            .querySelectorAll("button[onclick]")[1]
-            .classList.remove("bg-white", "border-2", "border-chick-yellow");
-        }
+  // 카드 번호 형식 지정
+  document
+    .getElementById("card-number")
+    .addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\s+/g, "");
+      if (value.length > 0) {
+        value = value.match(new RegExp(".{1,4}", "g")).join(" ");
       }
+      e.target.value = value;
+    });
 
-      // 폼 제출 처리
+  // 만료일 형식 지정
+  document
+    .getElementById("expiry-date")
+    .addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      if (value.length > 2) {
+        value = value.substring(0, 2) + "/" + value.substring(2, 4);
+      }
+      e.target.value = value;
+    });
+
+  // CVV 숫자만 입력
+  document.getElementById("cvv").addEventListener("input", function (e) {
+    e.target.value = e.target.value.replace(/\D/g, "");
+  });
+
+  // 계좌번호 숫자만 입력
+  document
+    .getElementById("from-account")
+    .addEventListener("input", function (e) {
+      e.target.value = e.target.value.replace(/\D/g, "");
+    });
+
+  // 계좌 비밀번호 숫자만 입력
+  document
+    .getElementById("account-password")
+    .addEventListener("input", function (e) {
+      e.target.value = e.target.value.replace(/\D/g, "");
+    });
+
+  // 입금 방법 선택
+  function selectDepositMethod(method) {
+    const cardSection = document.getElementById("card-deposit-section");
+    const accountSection = document.getElementById(
+      "account-deposit-section"
+    );
+    const methodInput = document.getElementById("deposit-method-input");
+
+    if (method === "card") {
+      cardSection.classList.remove("hidden");
+      accountSection.classList.add("hidden");
+      methodInput.value = "card";
+
+      // 버튼 스타일 변경
       document
-        .getElementById("deposit-form")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
+        .querySelectorAll("button[onclick]")[0]
+        .classList.add("bg-chick-yellow");
+      document
+        .querySelectorAll("button[onclick]")[0]
+        .classList.remove("bg-white", "border-2", "border-chick-yellow");
 
-          // 입금 처리 시뮬레이션
-          const button = this.querySelector('button[type="submit"]');
-          button.textContent = "처리 중...";
-          button.disabled = true;
+      document
+        .querySelectorAll("button[onclick]")[1]
+        .classList.remove("bg-chick-yellow");
+      document
+        .querySelectorAll("button[onclick]")[1]
+        .classList.add("bg-white", "border-2", "border-chick-yellow");
+    } else {
+      cardSection.classList.add("hidden");
+      accountSection.classList.remove("hidden");
+      methodInput.value = "account";
 
-          setTimeout(() => {
-            // 입금 성공 후 완료 페이지로 이동
-            window.location.href = "deposit-complete.html";
-          }, 1500);
-        });
-    </script>
-  </body>
-</html>
+      // 버튼 스타일 변경
+      document
+        .querySelectorAll("button[onclick]")[0]
+        .classList.remove("bg-chick-yellow");
+      document
+        .querySelectorAll("button[onclick]")[0]
+        .classList.add("bg-white", "border-2", "border-chick-yellow");
+
+      document
+        .querySelectorAll("button[onclick]")[1]
+        .classList.add("bg-chick-yellow");
+      document
+        .querySelectorAll("button[onclick]")[1]
+        .classList.remove("bg-white", "border-2", "border-chick-yellow");
+    }
+  }
+
+  // 폼 제출 처리
+  document
+    .getElementById("deposit-form")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      // 입금 처리 시뮬레이션
+      const button = this.querySelector('button[type="submit"]');
+      button.textContent = "처리 중...";
+      button.disabled = true;
+
+      setTimeout(() => {
+        // 입금 성공 후 완료 페이지로 이동
+        window.location.href = "deposit-complete.html";
+      }, 1500);
+    });
+</script>
+{% endblock %}

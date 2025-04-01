@@ -1,127 +1,51 @@
-<!-- <!DOCTYPE html>
-<html lang="ko">
+{% extends 'base.html' %}
+{% block title %}Chick Pay - 회원가입{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>회원가입</title>
-</head>
+{% block content %}
+<div class="bg-white rounded-3xl shadow-lg p-8 max-w-2xl mx-auto border-3 border-chick-yellow">
+    <h2 class="text-2xl font-bold text-chick-brown mb-6 text-center">회원가입</h2>
 
-<body>
-    <h2>회원가입</h2>
-    <form method="post">
+    <form id="register-form" method="post">
         {% csrf_token %}
-        <label for="email">이메일:</label><br>
-        <input type="email" name="email" required><br><br>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-        <label for="name">이름:</label><br>
-        <input type="text" name="name" required><br><br>
-
-        <label for="password">비밀번호:</label><br>
-        <input type="password" name="password" required><br><br>
-
-        <input type="submit" value="가입하기">
-    </form>
-
-    {% if message %}
-    <p style="color:green;">{{ message }}</p>
-    {% elif errors %}
-    <ul style="color:red;">
-        {% for field, error_list in errors.items %}
-        <li>{{ field }}: {{ error_list.0 }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-</body>
-
-</html> -->
-<!DOCTYPE html>
-<html lang="ko">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chick Pay - 회원가입</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'chick-yellow': '#FFDE59',
-                        'chick-orange': '#FFC93C',
-                        'chick-brown': '#B85C38',
-                        'chick-light': '#FFF9E5',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
-
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-    </style>
-</head>
-
-<body class="bg-chick-light text-gray-800 leading-relaxed min-h-screen flex flex-col">
-    <header class="bg-chick-yellow py-5 shadow-md">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="flex items-center gap-3">
-                    <div class="text-4xl">🐥</div>
-                    <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
-                </a>
+            <div class="md:col-span-2">
+                <label for="email" class="block mb-2 font-semibold text-gray-600">이메일 ID</label>
+                <input type="email" id="email" name="email" placeholder="이메일을 입력하세요" required
+                    class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
             </div>
-        </div>
-    </header>
 
-    <main class="container mx-auto px-4 py-10 flex-grow">
-        <div class="bg-white rounded-3xl shadow-lg p-8 max-w-2xl mx-auto border-3 border-chick-yellow">
-            <h2 class="text-2xl font-bold text-chick-brown mb-6 text-center">회원가입</h2>
+            <div>
+                <label for="name" class="block mb-2 font-semibold text-gray-600">이름</label>
+                <input type="text" id="name" name="name" placeholder="이름을 입력하세요" required
+                    class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+            </div>
 
-            <form id="register-form" method="post">
-                {% csrf_token %}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                <label for="birthdate" class="block mb-2 font-semibold text-gray-600">생년월일</label>
+                <input type="text" id="birthdate" name="birthdate" placeholder="예시 1994-03-05" required
+                    class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+            </div>
 
-                    <div class="md:col-span-2">
-                        <label for="email" class="block mb-2 font-semibold text-gray-600">이메일 ID</label>
-                        <input type="email" id="email" name="email" placeholder="이메일을 입력하세요" required
-                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
-                    </div>
+            <div>
+                <label for="password1" class="block mb-2 font-semibold text-gray-600">비밀번호</label>
+                <input type="password" id="password1" name="password1" placeholder="비밀번호를 입력하세요" required
+                    class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+            </div>
 
-                    <div>
-                        <label for="name" class="block mb-2 font-semibold text-gray-600">이름</label>
-                        <input type="text" id="name" name="name" placeholder="이름을 입력하세요" required
-                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
-                    </div>
+            <div>
+                <label for="password2" class="block mb-2 font-semibold text-gray-600">비밀번호 확인</label>
+                <input type="password" id="password2" name="password2" placeholder="비밀번호를 다시 입력하세요" required
+                    class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+            </div>
 
-                    <div>
-                        <label for="birthdate" class="block mb-2 font-semibold text-gray-600">생년월일</label>
-                        <input type="text" id="birthdate" name="birthdate" placeholder="예시 1994-03-05" required
-                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
-                    </div>
-
-                    <div>
-                        <label for="password1" class="block mb-2 font-semibold text-gray-600">비밀번호</label>
-                        <input type="password" id="password1" name="password1" placeholder="비밀번호를 입력하세요" required
-                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
-                    </div>
-
-                    <div>
-                        <label for="password2" class="block mb-2 font-semibold text-gray-600">비밀번호 확인</label>
-                        <input type="password" id="password2" name="password2" placeholder="비밀번호를 다시 입력하세요" required
-                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
-                    </div>
-
-                    <!-- <div class="md:col-span-2">
+            <!-- <div class="md:col-span-2">
                         <label for="account" class="block mb-2 font-semibold text-gray-600">연결할 계좌번호</label>
                         <input type="text" id="account" placeholder="계좌번호를 입력하세요 (- 없이)" required
                             class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
                     </div> -->
 
-                    <!-- <div class="md:col-span-2">
+            <!-- <div class="md:col-span-2">
                         <label for="bank" class="block mb-2 font-semibold text-gray-600">은행</label>
                         <select id="bank" required
                             class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
@@ -138,36 +62,29 @@
                     </div>
                 </div> -->
 
-                    <div class="mt-6">
-                        <div class="flex items-center mb-4">
-                            <input type="checkbox" id="terms" required class="mr-2">
-                            <label for="terms" class="text-sm text-gray-600">
-                                <span class="text-chick-brown font-semibold">이용약관</span>과 <span
-                                    class="text-chick-brown font-semibold">개인정보 처리방침</span>에 동의합니다.
-                            </label>
-                        </div>
+            <div class="mt-6">
+                <div class="flex items-center mb-4">
+                    <input type="checkbox" id="terms" required class="mr-2">
+                    <label for="terms" class="text-sm text-gray-600">
+                        <span class="text-chick-brown font-semibold">이용약관</span>과 <span
+                            class="text-chick-brown font-semibold">개인정보 처리방침</span>에 동의합니다.
+                    </label>
+                </div>
 
-                        <button type="submit"
-                            class="w-full bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0">
-                            회원가입 완료 🐥
-                        </button>
-                    </div>
-            </form>
-
-            <div class="mt-6 text-center">
-                <p class="text-gray-600">이미 계정이 있으신가요? <a href="login.html"
-                        class="text-chick-brown font-semibold hover:underline">로그인</a></p>
+                <button type="submit"
+                    class="w-full bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0">
+                    회원가입 완료 🐥
+                </button>
             </div>
-        </div>
-    </main>
+    </form>
 
-    <footer class="bg-chick-yellow py-6 text-center mt-8">
-        <div class="container mx-auto px-4">
-            <p>&copy; 2025 Chick Pay. 모든 권리 보유. 🐥</p>
-        </div>
-    </footer>
+    <div class="mt-6 text-center">
+        <p class="text-gray-600">이미 계정이 있으신가요? <a href="login.html"
+                class="text-chick-brown font-semibold hover:underline">로그인</a></p>
+    </div>
+</div>
 
-    <!-- <script>
+<!-- <script>
         // 전화번호 형식 지정
         document.getElementById('phone').addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
@@ -208,6 +125,4 @@
             }, 1500);
         });
     </script> -->
-</body>
-
-</html>
+{% endblock %}

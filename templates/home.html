@@ -1,29 +1,23 @@
-<!DOCTYPE html>
-<html lang="ko">
+{% extends 'base.html' %}
+{% block title %}Chick Pay - 로그인{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Chick Pay - 홈</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+{% block content %}
 
-<body class="bg-chick-light min-h-screen flex flex-col items-center justify-center text-center">
-    <h1 class="text-3xl font-bold text-chick-brown mb-4">🐥 Chick Pay 홈</h1>
+<h1 class="text-3xl font-bold text-chick-brown mb-4">🐥 Chick Pay 홈</h1>
 
-    {% if user.is_authenticated %}
-    <p class="text-lg text-gray-700">안녕하세요, <strong>{{ user.name }}</strong>님!</p>
-    <p class="text-sm text-gray-600 mt-2">이메일: {{ user.email }}</p>
-    <p class="text-sm ext-gray-600">생년월일: {{ user.birthdate }}</p>
+{% if user.is_authenticated %}
+<p class="text-lg text-gray-700">안녕하세요, <strong>{{ user.name }}</strong>님!</p>
+<p class="text-sm text-gray-600 mt-2">이메일: {{ user.email }}</p>
+<p class="text-sm text-gray-600">생년월일: {{ user.birthdate }}</p>
 
-    <form method="post" action="{% url 'logout' %}" class="mt-6">
-        {% csrf_token %}
-        <button type="submit" class="bg-chick-yellow px-4 py-2 rounded-xl shadow hover:bg-chick-orange">
-            로그아웃
-        </button>
-    </form>
-    {% else %}
-    <p class="text-gray-600">로그인이 필요합니다. <a href="{% url 'login' %}" class="text-chick-brown underline">로그인하러 가기</a></p>
-    {% endif %}
-</body>
+<form method="post" action="{% url 'logout' %}" class="mt-6">
+    {% csrf_token %}
+    <button type="submit" class="bg-chick-yellow px-4 py-2 rounded-xl shadow hover:bg-chick-orange">
+        로그아웃
+    </button>
+</form>
+{% else %}
+<p class="text-gray-600">로그인이 필요합니다. <a href="{% url 'login' %}" class="text-chick-brown underline">로그인하러 가기</a></p>
+{% endif %}
 
-</html>
+{% endblock %}
