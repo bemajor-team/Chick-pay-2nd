@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chick Pay - 송금하기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'chick-yellow': '#FFDE59',
+                        'chick-orange': '#FFC93C',
+                        'chick-brown': '#B85C38',
+                        'chick-light': '#FFF9E5',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-chick-light text-gray-800 leading-relaxed min-h-screen flex flex-col">
+    <header class="bg-chick-yellow py-5 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="text-4xl">🐥</div>
+                    <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
+                </a>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a href="account.html" class="text-chick-brown font-medium hover:underline">계좌조회</a>
+                    <a href="transfer.html" class="text-chick-brown font-medium hover:underline">송금하기</a>
+                    <a href="mypage.html" class="text-chick-brown font-medium hover:underline">마이페이지</a>
+                    <a href="login.html" class="text-chick-brown font-medium hover:underline">로그아웃</a>
+                </nav>
+                <button class="md:hidden text-2xl">☰</button>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container mx-auto px-4 py-10 flex-grow">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold text-chick-brown mb-8 text-center">송금하기</h2>
+            
+            <div class="bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow">
+                <form id="transfer-form">
+                    <div class="mb-6">
+                        <label for="from-account" class="block mb-2 font-semibold text-gray-600">출금 계좌</label>
+                        <select id="from-account" required
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                            <option value="" disabled selected>출금 계좌를 선택하세요</option>
+                            <option value="kb">KB국민은행 123-456-789012 (잔액: ₩1,250,000)</option>
+                            <option value="shinhan">신한은행 987-654-321098 (잔액: ₩3,750,000)</option>
+                            <option value="hana">하나은행 111-222-333444 (잔액: ₩850,000)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="to-bank" class="block mb-2 font-semibold text-gray-600">입금 은행</label>
+                        <select id="to-bank" required
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                            <option value="" disabled selected>입금 은행을 선택하세요</option>
+                            <option value="kb">KB국민은행</option>
+                            <option value="shinhan">신한은행</option>
+                            <option value="woori">우리은행</option>
+                            <option value="hana">하나은행</option>
+                            <option value="nh">농협은행</option>
+                            <option value="ibk">기업은행</option>
+                            <option value="kakao">카카오뱅크</option>
+                            <option value="toss">토스뱅크</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="to-account" class="block mb-2 font-semibold text-gray-600">입금 계좌번호</label>
+                        <input type="text" id="to-account" placeholder="계좌번호를 입력하세요 (- 없이)" required
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="to-name" class="block mb-2 font-semibold text-gray-600">받는 분 이름</label>
+                        <input type="text" id="to-name" placeholder="받는 분 이름을 입력하세요" required
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="amount" class="block mb-2 font-semibold text-gray-600">송금 금액</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-500">₩</span>
+                            <input type="number" id="amount" placeholder="0" required min="1000" step="1000"
+                                class="w-full p-3 pl-8 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <label for="memo" class="block mb-2 font-semibold text-gray-600">메모 (선택사항)</label>
+                        <input type="text" id="memo" placeholder="메모를 입력하세요"
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                    </div>
+                    
+                    <div class="flex items-center mb-6">
+                        <input type="checkbox" id="save-recipient" class="mr-2">
+                        <label for="save-recipient" class="text-sm text-gray-600">자주 쓰는 계좌로 저장</label>
+                    </div>
+                    
+                    <button type="submit" 
+                        class="w-full bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0">
+                        송금하기 🐥
+                    </button>
+                </form>
+            </div>
+            
+            <div class="mt-8">
+                <h3 class="text-xl font-bold text-chick-brown mb-4">자주 쓰는 계좌</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-md border border-chick-yellow cursor-pointer hover:bg-chick-light transition" onclick="fillRecipient('박영희', '신한은행', '110223344556')">
+                        <p class="font-bold">박영희</p>
+                        <p class="text-sm text-gray-600">신한은행 110-223-344556</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-4 shadow-md border border-chick-yellow cursor-pointer hover:bg-chick-light transition" onclick="fillRecipient('이철수', 'KB국민은행', '123456789012')">
+                        <p class="font-bold">이철수</p>
+                        <p class="text-sm text-gray-600">KB국민은행 123-456-789012</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-4 shadow-md border border-chick-yellow cursor-pointer hover:bg-chick-light transition" onclick="fillRecipient('김민지', '카카오뱅크', '3333044455555')">
+                        <p class="font-bold">김민지</p>
+                        <p class="text-sm text-gray-600">카카오뱅크 3333-04-4455555</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-4 shadow-md border border-chick-yellow cursor-pointer hover:bg-chick-light transition" onclick="fillRecipient('최준호', '우리은행', '1002757788899')">
+                        <p class="font-bold">최준호</p>
+                        <p class="text-sm text-gray-600">우리은행 1002-757-788899</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="bg-chick-yellow py-6 text-center mt-8">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2025 Chick Pay. 모든 권리 보유. 🐥</p>
+        </div>
+    </footer>
+    
+    <script>
+        // 모바일 메뉴 토글
+        const menuButton = document.querySelector('button');
+        const nav = document.querySelector('nav');
+    
+        menuButton.addEventListener('click', function () {
+            if (nav.classList.contains('hidden')) {
+                nav.classList.remove('hidden');
+                nav.classList.add('flex', 'flex-col', 'absolute', 'top-16', 'right-4', 'bg-white', 'p-4', 'rounded-xl', 'shadow-lg', 'z-50');
+            } else {
+                nav.classList.add('hidden');
+                nav.classList.remove('flex', 'flex-col', 'absolute', 'top-16', 'right-4', 'bg-white', 'p-4', 'rounded-xl', 'shadow-lg', 'z-50');
+            }
+        });
+    
+        // 계좌번호 숫자만 입력
+        document.getElementById('to-account').addEventListener('input', function (e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+    
+        // 자주 쓰는 계좌 선택
+        function fillRecipient(name, bank, account) {
+            document.getElementById('to-name').value = name;
+    
+            const bankSelect = document.getElementById('to-bank');
+            for (let i = 0; i < bankSelect.options.length; i++) {
+                if (bankSelect.options[i].text === bank) {
+                    bankSelect.selectedIndex = i;
+                    break;
+                }
+            }
+    
+            document.getElementById('to-account').value = account.replace(/\D/g, '');
+        }
+    
+        // ✅ 송금 API 호출
+        document.getElementById('transfer-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+    
+            const fromAccount = document.getElementById('from-account').value;
+            const toAccount = document.getElementById('to-account').value;
+            const amount = document.getElementById('amount').value;
+    
+            const button = this.querySelector('button');
+            button.textContent = '처리 중...';
+            button.disabled = true;
+    
+            try {
+                const res = await fetch('/transfer/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        from_id: fromAccount,
+                        to_id: toAccount,
+                        amount: amount
+                    })
+                });
+    
+                const data = await res.json();
+    
+                if (res.ok) {
+                    window.location.href = '/transfer/complete/';
+                } else {
+                    alert('송금 실패: ' + data.error);
+                    button.textContent = '송금하기 🐥';
+                    button.disabled = false;
+                }
+            } catch (err) {
+                alert('오류 발생: ' + err.message);
+                button.textContent = '송금하기 🐥';
+                button.disabled = false;
+            }
+        });
+    
+        // ✅ CSRF 토큰 가져오기 (Django용)
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>    
+</body>
+</html>

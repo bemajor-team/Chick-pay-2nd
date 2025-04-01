@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chick Pay - 계좌조회</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'chick-yellow': '#FFDE59',
+                        'chick-orange': '#FFC93C',
+                        'chick-brown': '#B85C38',
+                        'chick-light': '#FFF9E5',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-chick-light text-gray-800 leading-relaxed min-h-screen flex flex-col">
+    <header class="bg-chick-yellow py-5 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="text-4xl">🐥</div>
+                    <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
+                </a>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a href="account.html" class="text-chick-brown font-medium hover:underline">계좌조회</a>
+                    <a href="transfer.html" class="text-chick-brown font-medium hover:underline">송금하기</a>
+                    <a href="mypage.html" class="text-chick-brown font-medium hover:underline">마이페이지</a>
+                    <a href="login.html" class="text-chick-brown font-medium hover:underline">로그아웃</a>
+                </nav>
+                <button class="md:hidden text-2xl">☰</button>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container mx-auto px-4 py-10 flex-grow">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-chick-brown mb-8 text-center">계좌조회</h2>
+            
+            <div class="bg-white rounded-3xl shadow-lg p-8 mb-8 border-3 border-chick-yellow">
+                <h3 class="text-xl font-bold text-chick-brown mb-6">내 계좌 목록</h3>
+                
+                <div id="account-list" class="space-y-6"></div>
+
+                    
+                    <div class="bg-gradient-to-r from-blue-100 to-blue-200 rounded-2xl p-6 text-gray-700">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-bold">신한은행</span>
+                            <span class="text-2xl">🏦</span>
+                        </div>
+                        <div class="text-xl font-bold mb-2">987-654-321098</div>
+                        <div class="flex justify-between items-center">
+                            <span>김병아리</span>
+                            <span class="font-bold text-xl">₩ 3,750,000</span>
+                        </div>
+                        <div class="mt-4 flex gap-2">
+                            <a href="transfer.html" class="bg-white text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition">송금하기</a>
+                            <button class="bg-white text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition" onclick="showTransactions('shinhan')">거래내역</button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-green-100 to-green-200 rounded-2xl p-6 text-gray-700">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-bold">하나은행</span>
+                            <span class="text-2xl">🏦</span>
+                        </div>
+                        <div class="text-xl font-bold mb-2">111-222-333444</div>
+                        <div class="flex justify-between items-center">
+                            <span>김병아리</span>
+                            <span class="font-bold text-xl">₩ 850,000</span>
+                        </div>
+                        <div class="mt-4 flex gap-2">
+                            <a href="transfer.html" class="bg-white text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition">송금하기</a>
+                            <button class="bg-white text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition" onclick="showTransactions('hana')">거래내역</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="transactions" class="bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-chick-brown">거래내역</h3>
+                    <button onclick="hideTransactions()" class="text-gray-500 hover:text-gray-700">✕</button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 border-b">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-xl">
+                                ↓
+                            </div>
+                            <div>
+                                <p class="font-medium">입금: 이철수</p>
+                                <p class="text-sm text-gray-500">2025.03.25 14:30</p>
+                            </div>
+                        </div>
+                        <div class="text-green-600 font-bold">+ ₩50,000</div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 border-b">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-xl">
+                                ↑
+                            </div>
+                            <div>
+                                <p class="font-medium">송금: 박영희</p>
+                                <p class="text-sm text-gray-500">2025.03.24 11:15</p>
+                            </div>
+                        </div>
+                        <div class="text-red-600 font-bold">- ₩30,000</div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 border-b">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-xl">
+                                ↑
+                            </div>
+                            <div>
+                                <p class="font-medium">카페 결제</p>
+                                <p class="text-sm text-gray-500">2025.03.23 09:45</p>
+                            </div>
+                        </div>
+                        <div class="text-red-600 font-bold">- ₩5,500</div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 border-b">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-xl">
+                                ↓
+                            </div>
+                            <div>
+                                <p class="font-medium">급여: (주)병아리컴퍼니</p>
+                                <p class="text-sm text-gray-500">2025.03.20 00:05</p>
+                            </div>
+                        </div>
+                        <div class="text-green-600 font-bold">+ ₩2,500,000</div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 border-b">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-xl">
+                                ↑
+                            </div>
+                            <div>
+                                <p class="font-medium">마트 결제</p>
+                                <p class="text-sm text-gray-500">2025.03.19 18:22</p>
+                            </div>
+                        </div>
+                        <div class="text-red-600 font-bold">- ₩45,800</div>
+                    </div>
+                    
+                    <button class="w-full py-2 text-center text-chick-brown font-medium hover:underline">
+                        더 보기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="bg-chick-yellow py-6 text-center mt-8">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2025 Chick Pay. 모든 권리 보유. 🐥</p>
+        </div>
+    </footer>
+    
+    <script>
+        // ✅ API로 계좌 목록 가져오기
+        async function fetchAccounts() {
+            try {
+                const res = await fetch('/accounts/');
+                const data = await res.json();
+    
+                const list = document.getElementById('account-list');
+                list.innerHTML = '';
+    
+                data.accounts.forEach(account => {
+                    const div = document.createElement('div');
+                    div.className = 'bg-gradient-to-r from-chick-yellow to-chick-orange rounded-2xl p-6 text-chick-brown';
+    
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-bold">${account.bank}</span>
+                            <span class="text-2xl">🏦</span>
+                        </div>
+                        <div class="text-xl font-bold mb-2">${account.account_number}</div>
+                        <div class="flex justify-between items-center">
+                            <span>${account.owner || '사용자'}</span>
+                            <span class="font-bold text-xl">₩ ${account.balance.toLocaleString()}</span>
+                        </div>
+                        <div class="mt-4 flex gap-2">
+                            <a href="/transfer/page" class="bg-white text-chick-brown px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition">송금하기</a>
+                            <button class="bg-white text-chick-brown px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition" onclick="showTransactions(${account.id})">거래내역</button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+    
+            } catch (err) {
+                console.error('계좌 불러오기 실패:', err);
+                alert('계좌를 불러오는 데 실패했습니다.');
+            }
+        }
+    
+        // 거래내역 표시 (현재는 모달처럼 숨김 처리)
+        function showTransactions(accountId) {
+            document.getElementById('transactions').classList.remove('hidden');
+            // 추후 API 연동 시 accountId 활용 가능
+        }
+    
+        function hideTransactions() {
+            document.getElementById('transactions').classList.add('hidden');
+        }
+    
+        // 모바일 메뉴 토글
+        const menuButton = document.querySelector('button');
+        const nav = document.querySelector('nav');
+    
+        menuButton.addEventListener('click', function () {
+            if (nav.classList.contains('hidden')) {
+                nav.classList.remove('hidden');
+                nav.classList.add('flex', 'flex-col', 'absolute', 'top-16', 'right-4', 'bg-white', 'p-4', 'rounded-xl', 'shadow-lg', 'z-50');
+            } else {
+                nav.classList.add('hidden');
+                nav.classList.remove('flex', 'flex-col', 'absolute', 'top-16', 'right-4', 'bg-white', 'p-4', 'rounded-xl', 'shadow-lg', 'z-50');
+            }
+        });
+    
+        // 페이지 로드 시 계좌 불러오기 실행
+        window.addEventListener('DOMContentLoaded', fetchAccounts);
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chick Pay - 계좌 상세</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "chick-yellow": "#FFDE59",
+              "chick-orange": "#FFC93C",
+              "chick-brown": "#B85C38",
+              "chick-light": "#FFF9E5",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap");
+      body {
+        font-family: "Noto Sans KR", sans-serif;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-chick-light text-gray-800 leading-relaxed min-h-screen flex flex-col"
+  >
+    <header class="bg-chick-yellow py-5 shadow-md">
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between">
+          <a href="index.html" class="flex items-center gap-3">
+            <div class="text-4xl">🐥</div>
+            <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
+          </a>
+          <nav class="hidden md:flex items-center gap-6">
+            <a
+              href="account.html"
+              class="text-chick-brown font-medium hover:underline"
+              >계좌조회</a
+            >
+            <a
+              href="transfer.html"
+              class="text-chick-brown font-medium hover:underline"
+              >송금하기</a
+            >
+            <a
+              href="deposit.html"
+              class="text-chick-brown font-medium hover:underline"
+              >입금하기</a
+            >
+            <a
+              href="withdraw.html"
+              class="text-chick-brown font-medium hover:underline"
+              >출금하기</a
+            >
+            <a
+              href="mypage.html"
+              class="text-chick-brown font-medium hover:underline"
+              >마이페이지</a
+            >
+            <a
+              href="login.html"
+              class="text-chick-brown font-medium hover:underline"
+              >로그아웃</a
+            >
+          </nav>
+          <button class="md:hidden text-2xl">☰</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-10 flex-grow">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center mb-8">
+          <a
+            href="account.html"
+            class="text-chick-brown hover:underline flex items-center"
+          >
+            <span class="mr-2">←</span> 계좌 목록으로 돌아가기
+          </a>
+        </div>
+
+        <div
+          class="bg-gradient-to-r from-chick-yellow to-chick-orange rounded-3xl p-8 text-chick-brown shadow-lg mb-8"
+        >
+          <div class="flex justify-between items-center mb-4">
+            <span class="font-bold text-xl">KB국민은행</span>
+            <span class="text-3xl">🏦</span>
+          </div>
+          <div class="text-2xl font-bold mb-2">123-456-789012</div>
+          <div class="flex justify-between items-center">
+            <span class="text-lg">김병아리</span>
+            <span class="font-bold text-3xl">₩ 1,250,000</span>
+          </div>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a
+              href="transfer.html"
+              class="bg-white text-chick-brown px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition"
+              >송금하기</a
+            >
+            <a
+              href="deposit.html"
+              class="bg-white text-chick-brown px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition"
+              >입금하기</a
+            >
+            <a
+              href="withdraw.html"
+              class="bg-white text-chick-brown px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition"
+              >출금하기</a
+            >
+            <button
+              class="bg-white text-chick-brown px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition"
+            >
+              계좌 정보 수정
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow mb-8"
+        >
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-chick-brown">거래내역</h3>
+            <div class="flex items-center gap-4">
+              <div class="relative">
+                <input
+                  type="text"
+                  placeholder="검색"
+                  class="pl-8 pr-4 py-2 border rounded-lg focus:outline-none focus:border-chick-orange"
+                />
+                <span class="absolute left-2 top-2.5">🔍</span>
+              </div>
+              <select
+                class="border rounded-lg px-3 py-2 focus:outline-none focus:border-chick-orange"
+              >
+                <option value="all">전체 기간</option>
+                <option value="1month">1개월</option>
+                <option value="3months">3개월</option>
+                <option value="6months">6개월</option>
+                <option value="1year">1년</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-center justify-between p-4 border-b">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-xl"
+                >
+                  ↓
+                </div>
+                <div>
+                  <p class="font-medium">입금: 이철수</p>
+                  <p class="text-sm text-gray-500">2025.03.25 14:30</p>
+                </div>
+              </div>
+              <div class="text-green-600 font-bold">+ ₩50,000</div>
+            </div>
+
+            <div class="flex items-center justify-between p-4 border-b">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-xl"
+                >
+                  ↑
+                </div>
+                <div>
+                  <p class="font-medium">송금: 박영희</p>
+                  <p class="text-sm text-gray-500">2025.03.24 11:15</p>
+                </div>
+              </div>
+              <div class="text-red-600 font-bold">- ₩30,000</div>
+            </div>
+
+            <div class="flex items-center justify-between p-4 border-b">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-xl"
+                >
+                  ↑
+                </div>
+                <div>
+                  <p class="font-medium">카페 결제</p>
+                  <p class="text-sm text-gray-500">2025.03.23 09:45</p>
+                </div>
+              </div>
+              <div class="text-red-600 font-bold">- ₩5,500</div>
+            </div>
+
+            <div class="flex items-center justify-between p-4 border-b">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-xl"
+                >
+                  ↓
+                </div>
+                <div>
+                  <p class="font-medium">급여: (주)병아리컴퍼니</p>
+                  <p class="text-sm text-gray-500">2025.03.20 00:05</p>
+                </div>
+              </div>
+              <div class="text-green-600 font-bold">+ ₩2,500,000</div>
+            </div>
+
+            <div class="flex items-center justify-between p-4 border-b">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-xl"
+                >
+                  ↑
+                </div>
+                <div>
+                  <p class="font-medium">마트 결제</p>
+                  <p class="text-sm text-gray-500">2025.03.19 18:22</p>
+                </div>
+              </div>
+              <div class="text-red-600 font-bold">- ₩45,800</div>
+            </div>
+
+            <div class="flex items-center justify-between p-4 border-b">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-xl"
+                >
+                  ↑
+                </div>
+                <div>
+                  <p class="font-medium">온라인 쇼핑</p>
+                  <p class="text-sm text-gray-500">2025.03.18 20:15</p>
+                </div>
+              </div>
+              <div class="text-red-600 font-bold">- ₩78,500</div>
+            </div>
+
+            <div class="flex items-center justify-between p-4 border-b">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-xl"
+                >
+                  ↑
+                </div>
+                <div>
+                  <p class="font-medium">식당 결제</p>
+                  <p class="text-sm text-gray-500">2025.03.17 19:30</p>
+                </div>
+              </div>
+              <div class="text-red-600 font-bold">- ₩35,000</div>
+            </div>
+
+            <div class="flex items-center justify-between p-4 border-b">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-xl"
+                >
+                  ↓
+                </div>
+                <div>
+                  <p class="font-medium">입금: 최준호</p>
+                  <p class="text-sm text-gray-500">2025.03.15 10:45</p>
+                </div>
+              </div>
+              <div class="text-green-600 font-bold">+ ₩120,000</div>
+            </div>
+          </div>
+
+          <div class="mt-6 flex justify-center">
+            <div class="flex items-center gap-2">
+              <button
+                class="w-8 h-8 flex items-center justify-center rounded-full border hover:bg-gray-100"
+              >
+                &lt;
+              </button>
+              <button
+                class="w-8 h-8 flex items-center justify-center rounded-full bg-chick-yellow text-chick-brown font-bold"
+              >
+                1
+              </button>
+              <button
+                class="w-8 h-8 flex items-center justify-center rounded-full border hover:bg-gray-100"
+              >
+                2
+              </button>
+              <button
+                class="w-8 h-8 flex items-center justify-center rounded-full border hover:bg-gray-100"
+              >
+                3
+              </button>
+              <button
+                class="w-8 h-8 flex items-center justify-center rounded-full border hover:bg-gray-100"
+              >
+                &gt;
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow"
+        >
+          <h3 class="text-xl font-bold text-chick-brown mb-6">지출 분석</h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h4 class="font-bold mb-4 text-center">카테고리별 지출</h4>
+              <div
+                class="aspect-square bg-gray-100 rounded-xl flex items-center justify-center"
+              >
+                <div class="text-center">
+                  <p class="text-gray-500">차트 이미지</p>
+                  <p class="text-xs text-gray-400">
+                    (실제 구현 시 차트 라이브러리 사용)
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="font-bold mb-4 text-center">월별 지출 추이</h4>
+              <div
+                class="aspect-square bg-gray-100 rounded-xl flex items-center justify-center"
+              >
+                <div class="text-center">
+                  <p class="text-gray-500">차트 이미지</p>
+                  <p class="text-xs text-gray-400">
+                    (실제 구현 시 차트 라이브러리 사용)
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <h4 class="font-bold mb-4">지출 요약</h4>
+            <div class="space-y-4">
+              <div
+                class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+              >
+                <span>식비</span>
+                <span class="font-bold">₩ 320,000</span>
+              </div>
+              <div
+                class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+              >
+                <span>쇼핑</span>
+                <span class="font-bold">₩ 450,000</span>
+              </div>
+              <div
+                class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+              >
+                <span>교통</span>
+                <span class="font-bold">₩ 85,000</span>
+              </div>
+              <div
+                class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+              >
+                <span>여가</span>
+                <span class="font-bold">₩ 150,000</span>
+              </div>
+              <div
+                class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+              >
+                <span>기타</span>
+                <span class="font-bold">₩ 95,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-chick-yellow py-6 text-center mt-8">
+      <div class="container mx-auto px-4">
+        <p>&copy; 2025 Chick Pay. 모든 권리 보유. 🐥</p>
+      </div>
+    </footer>
+
+    <script>
+      // 모바일 메뉴 토글
+      const menuButton = document.querySelector("button");
+      const nav = document.querySelector("nav");
+
+      menuButton.addEventListener("click", function () {
+        if (nav.classList.contains("hidden")) {
+          nav.classList.remove("hidden");
+          nav.classList.add(
+            "flex",
+            "flex-col",
+            "absolute",
+            "top-16",
+            "right-4",
+            "bg-white",
+            "p-4",
+            "rounded-xl",
+            "shadow-lg",
+            "z-50"
+          );
+        } else {
+          nav.classList.add("hidden");
+          nav.classList.remove(
+            "flex",
+            "flex-col",
+            "absolute",
+            "top-16",
+            "right-4",
+            "bg-white",
+            "p-4",
+            "rounded-xl",
+            "shadow-lg",
+            "z-50"
+          );
+        }
+      });
+    </script>
+  </body>
+</html>
