@@ -1,11 +1,22 @@
-from django.shortcuts import render
+from django.shortcuts import render ,redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RegisterSerializer
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from .forms import LoginForm
+from django.views import View
 
+
+
+
+class MainView(APIView):
+    def get(self, request):
+        # 메인 페이지로 HTML을 렌더링한다.
+        return render(request, 'main.html')
+    
 class RegisterView(APIView):
     def get(self, request):
         # 그냥 render() 함수로 HTML 파일을 반환
@@ -17,14 +28,6 @@ class RegisterView(APIView):
             serializer.save()
             return Response({"message": "회원가입 성공!"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-from django.contrib.auth import authenticate, login
-from django.shortcuts import redirect
-from .forms import LoginForm
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-from django.views import View
 
 class LoginView(APIView):
     def get(self, request):
@@ -44,5 +47,3 @@ class HomeView(APIView):
     def get(self, request):
         return render(request, 'home.html' )
         
-
-

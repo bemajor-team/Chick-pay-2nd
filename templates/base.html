@@ -1,6 +1,6 @@
 <!-- templates/base.html -->
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
@@ -23,6 +23,25 @@
             },
         };
     </script>
+    <!-- <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "chick-yellow": "#FFDE59",
+                        "chick-orange": "#FFC93C",
+                        "chick-brown": "#B85C38",
+                        "chick-light": "#FFF9E5",
+                    },
+                },
+            },
+            safelist: [
+                'bg-chick-yellow', 'bg-chick-orange', 'bg-chick-brown', 'bg-chick-light',
+                'text-chick-yellow', 'text-chick-orange', 'text-chick-brown', 'text-chick-light',
+                'border-chick-yellow', 'border-chick-orange', 'border-chick-brown', 'border-chick-light'
+            ]
+        };
+    </script> -->
 
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap");
@@ -78,11 +97,11 @@
     </main>
 
 
-    <footer class="bg-chick-yellow py-6 text-center mt-8">
+    <footer class="bg-chick-yellow py-8">
         <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center mb-2">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
                 <div class="flex items-center gap-3 mb-6 md:mb-0">
-                    <div class="text-2xl">🐥</div>
+                    <div class="text-4xl">🐥</div>
                     <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
                 </div>
 
