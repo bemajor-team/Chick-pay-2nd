@@ -1,0 +1,212 @@
+<!-- <!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+</head>
+
+<body>
+    <h2>회원가입</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="email">이메일:</label><br>
+        <input type="email" name="email" required><br><br>
+
+        <label for="name">이름:</label><br>
+        <input type="text" name="name" required><br><br>
+
+        <label for="password">비밀번호:</label><br>
+        <input type="password" name="password" required><br><br>
+
+        <input type="submit" value="가입하기">
+    </form>
+
+    {% if message %}
+    <p style="color:green;">{{ message }}</p>
+    {% elif errors %}
+    <ul style="color:red;">
+        {% for field, error_list in errors.items %}
+        <li>{{ field }}: {{ error_list.0 }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</body>
+
+</html> -->
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chick Pay - 회원가입</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'chick-yellow': '#FFDE59',
+                        'chick-orange': '#FFC93C',
+                        'chick-brown': '#B85C38',
+                        'chick-light': '#FFF9E5',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-chick-light text-gray-800 leading-relaxed min-h-screen flex flex-col">
+    <header class="bg-chick-yellow py-5 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="text-4xl">🐥</div>
+                    <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-10 flex-grow">
+        <div class="bg-white rounded-3xl shadow-lg p-8 max-w-2xl mx-auto border-3 border-chick-yellow">
+            <h2 class="text-2xl font-bold text-chick-brown mb-6 text-center">회원가입</h2>
+
+            <form id="register-form" method="post">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="name" class="block mb-2 font-semibold text-gray-600">이름</label>
+                        <input type="text" id="name" placeholder="이름을 입력하세요" required
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                    </div>
+
+                    <div>
+                        <label for="phone" class="block mb-2 font-semibold text-gray-600">전화번호</label>
+                        <input type="tel" id="phone" placeholder="010-0000-0000" required
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="email" class="block mb-2 font-semibold text-gray-600">이메일</label>
+                        <input type="email" id="email" placeholder="이메일을 입력하세요" required
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                    </div>
+
+                    <div>
+                        <label for="password" class="block mb-2 font-semibold text-gray-600">비밀번호</label>
+                        <input type="password" id="password" placeholder="비밀번호를 입력하세요" required
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                    </div>
+
+                    <div>
+                        <label for="confirm-password" class="block mb-2 font-semibold text-gray-600">비밀번호 확인</label>
+                        <input type="password" id="confirm-password" placeholder="비밀번호를 다시 입력하세요" required
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="account" class="block mb-2 font-semibold text-gray-600">연결할 계좌번호</label>
+                        <input type="text" id="account" placeholder="계좌번호를 입력하세요 (- 없이)" required
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="bank" class="block mb-2 font-semibold text-gray-600">은행</label>
+                        <select id="bank" required
+                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                            <option value="" disabled selected>은행을 선택하세요</option>
+                            <option value="kb">KB국민은행</option>
+                            <option value="shinhan">신한은행</option>
+                            <option value="woori">우리은행</option>
+                            <option value="hana">하나은행</option>
+                            <option value="nh">농협은행</option>
+                            <option value="ibk">기업은행</option>
+                            <option value="kakao">카카오뱅크</option>
+                            <option value="toss">토스뱅크</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <div class="flex items-center mb-4">
+                        <input type="checkbox" id="terms" required class="mr-2">
+                        <label for="terms" class="text-sm text-gray-600">
+                            <span class="text-chick-brown font-semibold">이용약관</span>과 <span
+                                class="text-chick-brown font-semibold">개인정보 처리방침</span>에 동의합니다.
+                        </label>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0">
+                        회원가입 완료 🐥
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">이미 계정이 있으신가요? <a href="login.html"
+                        class="text-chick-brown font-semibold hover:underline">로그인</a></p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-chick-yellow py-6 text-center mt-8">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2025 Chick Pay. 모든 권리 보유. 🐥</p>
+        </div>
+    </footer>
+
+    <script>
+        // 전화번호 형식 지정
+        document.getElementById('phone').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 3 && value.length <= 7) {
+                value = value.substring(0, 3) + '-' + value.substring(3);
+            } else if (value.length > 7) {
+                value = value.substring(0, 3) + '-' + value.substring(3, 7) + '-' + value.substring(7, 11);
+            }
+            e.target.value = value;
+        });
+
+        // 계좌번호 숫자만 입력
+        document.getElementById('account').addEventListener('input', function (e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        // 폼 제출 처리
+        document.getElementById('register-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // 비밀번호 확인
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+
+            // 회원가입 처리 시뮬레이션
+            const button = this.querySelector('button');
+            button.textContent = '처리 중...';
+            button.disabled = true;
+
+            setTimeout(() => {
+                // 회원가입 성공 후 로그인 페이지로 이동
+                window.location.href = 'login.html';
+            }, 1500);
+        });
+    </script>
+</body>
+
+</html>
