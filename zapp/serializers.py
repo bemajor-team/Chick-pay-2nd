@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import CustomUser
+from .models import Cash
+
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -23,3 +25,24 @@ class RegisterSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return user
+
+# zapp/serializers.py
+
+from rest_framework import serializers
+from .models import Cash
+
+class CashSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='user.email', read_only=True)
+
+    class Meta:
+        model = Cash
+        fields = ['user', 'email', 'balance', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'email', 'created_at', 'updated_at', 'balance']
+
+class CashTransactionSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+    def validate_amount(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("금액은 0보다 커야 합니다.")
+        return value

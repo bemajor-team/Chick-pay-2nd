@@ -8,4 +8,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('home/', HomeView.as_view(), name='home'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+    path('cash/', CashDetailView.as_view(), name='cash-detail'),
+    path('cash/deposit/', CashDepositView.as_view(), name='cash-deposit'),
+    path('cash/withdraw/', CashWithdrawView.as_view(), name='cash-withdraw'),
 ]

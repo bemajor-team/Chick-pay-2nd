@@ -9,9 +9,6 @@ from django.utils.decorators import method_decorator
 from .forms import LoginForm
 from django.views import View
 
-
-
-
 class MainView(APIView):
     def get(self, request):
         # 메인 페이지로 HTML을 렌더링한다.
@@ -47,3 +44,46 @@ class HomeView(APIView):
     def get(self, request):
         return render(request, 'home.html' )
         
+
+# zapp/views.py
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from .models import Cash
+from .serializers import CashSerializer, CashTransactionSerializer
+
+class CashDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        cash, created = Cash.objects.get_or_create(user=request.user)
+        serializer = CashSerializer(cash)
+        return Response(serializer.data)
+
+class CashDepositView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        cash, created = Cash.objects.get_or_create(user=request.user)
+        serializer = CashTransactionSerializer(data=request.data)
+        if serializer.is_valid():
+            amount = serializer.validated_data['amount']
+            cash.deposit(amount)
+            return Response({'message': f"{amount}원이 입금되었습니다.", 'balance': cash.balance})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CashWithdrawView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        cash, created = Cash.objects.get_or_create(user=request.user)
+        serializer = CashTransactionSerializer(data=request.data)
+        if serializer.is_valid():
+            amount = serializer.validated_data['amount']
+            if cash.withdraw(amount):
+                return Response({'message': f"{amount}원이 출금되었습니다.", 'balance': cash.balance})
+            else:
+                return Response({'error': '잔액이 부족합니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
