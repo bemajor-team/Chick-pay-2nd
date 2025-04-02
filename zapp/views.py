@@ -112,15 +112,26 @@ class DepositCompleteView(View):
         
         cash = getattr(user, 'cash', None)
 
-        transactions = CashTransaction.objects.filter(user=user).order_by('-created_at')  # 최신순
+        recent_deposits = CashTransaction.objects.filter(
+            user=user,
+            transaction_type='deposit'
+        ).order_by('-created_at')[:3]
 
+        if recent_deposits:
+            latest_deposit_amount = recent_deposits[0].amount
+                   
+            previous_balance = cash.balance - latest_deposit_amount
+        
         context = {
             'name': user.name,
             'email': user.email,
-            'balance': cash.balance if cash else 0.00
-
-    
+            'balance': cash.balance if cash else 0.00,
+            'recent_deposits': recent_deposits,
+            'previous_balance' : previous_balance,
+            
         }
+
+        
 
         return render(request, 'deposit-complete.html', context)
 
