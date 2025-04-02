@@ -34,14 +34,24 @@
                 <div class="bg-chick-light rounded-xl p-6 mb-6">
                     <div class="flex justify-between items-center mb-3">
                         <span class="font-bold">입금 금액</span>
-                        <span class="text-2xl font-bold text-chick-brown">₩ 500,000</span>
+                        <span class="text-2xl font-bold text-chick-brown">                      
+                        {% if recent_deposits.0 %}
+                            ₩ {{recent_deposits.0.amount|floatformat:"0"|intcomma }}
+                          {% else %}
+                            ₩ 0
+                          {% endif %}
+                        </span>
                     </div>
                     <div class="flex justify-between items-center mb-3">
                         <!-- <span>입금 방법</span> -->
                     </div>
                     <div class="flex justify-between items-center mb-3">
                         <span>입금 일시</span>
-                        <span>2025년 4월 1일 10:15</span>
+                        <span>    {% if recent_deposits %}
+                            {{ recent_deposits.0.created_at|date:"Y년 n월 j일 H:i" }}
+                          {% else %}
+                            내역 없음
+                          {% endif %}</span>
                     </div>
                     <div class="flex justify-between items-center mb-3">
                         <span>거래 ID</span>
@@ -53,74 +63,88 @@
                     </div>
                 </div>
 
-
             <div class="border-t border-gray-200 pt-6">
                 <h3 class="text-xl font-bold text-chick-brown mb-4">입금 후 잔액</h3>
                 <div class="flex justify-between items-center">
                     <span>이전 잔액</span>
-                    <span>₩ 750,000</span>
+                    <span>₩  {{previous_balance|floatformat:"0"|intcomma}} </span>
                 </div>
                 <div class="flex justify-between items-center mb-2">
                     <span>입금 금액</span>
-                    <span class="text-green-500">+ ₩ 500,000</span>
+                    <span class="text-green-500">+ ₩ {{recent_deposits.0.amount|floatformat:"0"|intcomma }}</span>
                 </div>
                 <div class="flex justify-between items-center font-bold text-lg">
                     <span>현재 잔액</span>
-                    <span class="text-chick-brown">₩ 1,250,000</span>
+                    <span class="text-chick-brown">₩ {{ balance|floatformat:"0"|intcomma }}</span>
                 </div>
             </div>
-
-            <div class="mt-8 flex flex-wrap gap-3 justify-center">
-                <a href="deposit.html"
-                    class="bg-chick-brown text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-opacity-90 transition">
-                    새 입금 요청
-                </a>
-                <a href="account.html"
-                    class="bg-white text-chick-brown px-6 py-3 rounded-xl text-sm font-medium border-2 border-chick-brown hover:bg-chick-light transition">
-                    계좌 목록으로
-                </a>
-                <button
-                    class="bg-white text-gray-600 px-6 py-3 rounded-xl text-sm font-medium border-2 border-gray-300 hover:bg-gray-100 transition">
-                    영수증 다운로드
-                </button>
-            </div>
         </div>
+
+
+
+
+
+
+        <!-- <h3 class="">최근 입금 내역</h3>
+        {% for tx in recent_deposits %}
+        <div class="">
+            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 shadow">
+              <p class="text-sm text-gray-700 font-semibold">입금 금액</p>
+              <p class="text-xl font-bold text-chick-brown">
+                ₩ {{ tx.amount|floatformat:"0" }}
+              </p>
+              <p class="text-sm text-gray-500 mt-2">
+                {{ tx.created_at|date:"Y년 n월 j일 H:i" }}
+              </p>
+              {% if tx.memo %}
+                <p class="text-sm text-gray-600 mt-1">메모: {{ tx.memo }}</p>
+              {% endif %}
+            </div>
+          {% empty %}
+            <p class="text-gray-400">입금 내역이 없습니다.</p>
+          {% endfor %}
+        </div> -->
 
         <div class="bg-white rounded-3xl p-8 shadow-lg">
             <h3 class="text-xl font-bold text-chick-brown mb-6">최근 입금 내역</h3>
-
+        
             <div class="space-y-4">
-                <div class="flex justify-between items-center p-4 border-b border-gray-100">
-                </div>
-
-                <div class="flex justify-between items-center p-4 border-b border-gray-100">
-                    <div>
-                        <div class="font-medium">우리은행</div>
-                        <div class="text-sm text-gray-500">2025년 3월 20일</div>
+                {% for tx in recent_deposits %}
+                    <div class="flex justify-between items-center p-4 {% if not forloop.last %}border-b border-gray-100{% endif %}">
+                        <div>
+                            <div class="font-medium">
+                                {% if tx.bank_name %}
+                                    {{ tx.bank_name }}
+                                {% else %}
+                                    입금
+                                {% endif %}
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                {{ tx.created_at|date:"Y년 n월 j일 H:i" }}
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-green-500">+ ₩ {{ tx.amount|floatformat:"0"|intcomma }}</div>
+                            <div class="text-sm text-gray-500">
+                                {% if tx.transaction_method %}
+                                    {{ tx.transaction_method }}
+                                {% else %}
+                                    계좌 이체
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-right">
-                        <div class="font-bold text-green-500">+ ₩ 300,000</div>
-                        <div class="text-sm text-gray-500">계좌 이체</div>
+                {% empty %}
+                    <div class="text-center text-gray-500 py-4">
+                        입금 내역이 없습니다.
                     </div>
-                </div>
-
-                <div class="flex justify-between items-center p-4">
-                    <div>
-                        <div class="font-medium">현대카드</div>
-                        <div class="text-sm text-gray-500">2025년 3월 10일</div>
-                    </div>
-                    <div class="text-right">
-                        <div class="font-bold text-green-500">+ ₩ 200,000</div>
-                        <div class="text-sm text-gray-500">카드 결제</div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
-
+        
             <div class="mt-6 text-center">
-                <a href="#" class="text-chick-brown hover:underline text-sm">모든 입금 내역 보기</a>
+                <a href="{}" class="text-chick-brown hover:underline text-sm">모든 입금 내역 보기</a>
             </div>
         </div>
-
     </div>
 </main>
 {% endblock %}
