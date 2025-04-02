@@ -1,9 +1,8 @@
 from rest_framework import serializers
-from .models import CustomUser
-from .models import Cash
+from django.contrib.auth import password_validation
+from .models import CustomUser, Cash
 
-
-
+# 🔐 회원가입 Serializer
 class RegisterSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
@@ -26,19 +25,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
-# zapp/serializers.py
-
-from rest_framework import serializers
-from .models import Cash
-
+# 💰 캐시 정보 Serializer (조회용)
 class CashSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', read_only=True)
 
     class Meta:
         model = Cash
-        fields = ['user', 'email', 'balance', 'created_at', 'updated_at']
-        read_only_fields = ['user', 'email', 'created_at', 'updated_at', 'balance']
+        fields = ['name', 'user', 'email', 'balance', 'created_at', 'updated_at']
+        read_only_fields = ['nane' ,'user', 'email', 'balance', 'created_at', 'updated_at']
 
+# 💸 캐시 충전/사용 Serializer
 class CashTransactionSerializer(serializers.Serializer):
     amount = serializers.DecimalField(max_digits=12, decimal_places=2)
 
@@ -46,3 +42,38 @@ class CashTransactionSerializer(serializers.Serializer):
         if value <= 0:
             raise serializers.ValidationError("금액은 0보다 커야 합니다.")
         return value
+
+
+# 👤 마이페이지 정보 조회 Serializer
+class MyPageSerializer(serializers.ModelSerializer):
+    balance = serializers.DecimalField(
+        source='cash.balance',
+        max_digits=12,
+        decimal_places=2,
+        read_only=True
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'name', 'birthdate', 'balance']
+
+# 🔐 비밀번호 변경 Serializer
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
+
+    def validate_new_password(self, value):
+        password_validation.validate_password(value)
+        return value
+
+    def validate(self, data):
+        user = self.context['request'].user
+        if not user.check_password(data['old_password']):
+            raise serializers.ValidationError({'old_password': '기존 비밀번호가 틀렸습니다.'})
+        return data
+
+    def save(self, **kwargs):
+        user = self.context['request'].user
+        user.set_password(self.validated_data['new_password'])
+        user.save()
+        return user

@@ -59,54 +59,19 @@ class Cash(models.Model):
         return f"{self.user.email} - Balance: {self.balance}"
 
 
+class CashTransaction(models.Model):
+    TRANSACTION_TYPES = (
+        ('deposit', '입금'),
+        ('withdraw', '출금'),
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    memo = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"[{self.get_transaction_type_display()}] {self.user.name} - {self.amount}원"
 
 
-# class Cash(models.Model):
-#     user = models.OneToOneField(
-#         settings.AUTH_USER_MODEL,  # CustomUser 모델과 연결
-#         on_delete=models.CASCADE,
-#         related_name='cash'  
-#     )
-#     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-
-#     def deposit(self, amount):
-#         self.balance += amount
-#         self.save()
-
-#     def withdraw(self, amount):
-#         if self.balance >= amount:
-#             self.balance -= amount
-#             self.save()
-#             return True
-#         return False
-
-#     def __str__(self):
-#         return f"{self.user.email} - Balance: {self.balance}"
-
-
-# class Cash(models.Model):
-#     user = models.OneToOneField(
-#         settings.AUTH_USER_MODEL,
-#         on_delete=models.CASCADE,
-#         primary_key=True,  # ✅ user_id를 이 테이블의 PK로 설정
-#         related_name='cash'
-#     )
-#     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-
-#     def deposit(self, amount):
-#         self.balance += amount
-#         self.save()
-
-#     def withdraw(self, amount):
-#         if self.balance >= amount:
-#             self.balance -= amount
-#             self.save()
-#             return True
-#         return False
-
-#     def __str__(self):
-#         return f"{self.user.email} - Balance: {self.balance}"
