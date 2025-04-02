@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}Chick Pay - 입금 완료{% endblock %}
-
 {% block content %}
+
+{% load humanize %}
 <main class="container mx-auto px-4 py-10 flex-grow">
     <div class="max-w-4xl mx-auto">
         <div class="flex items-center mb-8">
-            <a href="deposit.html" class="text-chick-brown hover:underline flex items-center">
+            <a href="{% url 'cash-deposit' %}" class="text-chick-brown hover:underline flex items-center">
                 <span class="mr-2">←</span> 입금 페이지로 돌아가기
             </a>
         </div>
-
         <div class="bg-white rounded-3xl p-8 shadow-lg mb-8">
             <h2 class="text-2xl font-bold text-chick-brown mb-6 flex items-center">
                 <span class="text-3xl mr-3">💰</span> 입금 상세 정보
@@ -18,15 +18,15 @@
             <div
                 class="bg-gradient-to-r from-chick-yellow to-chick-orange rounded-2xl p-6 text-chick-brown shadow-md mb-8">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="font-bold text-xl">KB국민은행</span>
+                    <span class="font-bold text-xl">Cash</span>
                     <span class="text-3xl">🏦</span>
                 </div>
-                <div class="text-2xl font-bold mb-2">123-456-789012</div>
+                <div class="text-2xl font-bold mb-2">{{email}}</div>
                 <div class="flex justify-between items-center">
-                    <span class="text-lg">김병아리</span>
-                    <span class="font-bold text-3xl">₩ 1,250,000</span>
+                    <span class="text-lg">{{ name }}</span>
+                    <span class="font-bold text-3xl">₩ {{ balance|floatformat:"0"|intcomma }}</span>
                 </div>
-            </div>
+            </div> 
 
             <div class="mb-8">
                 <h3 class="text-xl font-bold text-chick-brown mb-4">입금 내역</h3>
@@ -37,8 +37,7 @@
                         <span class="text-2xl font-bold text-chick-brown">₩ 500,000</span>
                     </div>
                     <div class="flex justify-between items-center mb-3">
-                        <span>입금 방법</span>
-                        <span>카드 결제</span>
+                        <!-- <span>입금 방법</span> -->
                     </div>
                     <div class="flex justify-between items-center mb-3">
                         <span>입금 일시</span>
@@ -54,22 +53,6 @@
                     </div>
                 </div>
 
-                <div class="bg-chick-light rounded-xl p-6">
-                    <h4 class="font-bold mb-3">결제 카드 정보</h4>
-                    <div class="flex justify-between items-center mb-2">
-                        <span>카드사</span>
-                        <span>삼성카드</span>
-                    </div>
-                    <div class="flex justify-between items-center mb-2">
-                        <span>카드번호</span>
-                        <span>**** **** **** 5678</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span>결제자</span>
-                        <span>김병아리</span>
-                    </div>
-                </div>
-            </div>
 
             <div class="border-t border-gray-200 pt-6">
                 <h3 class="text-xl font-bold text-chick-brown mb-4">입금 후 잔액</h3>
@@ -108,14 +91,6 @@
 
             <div class="space-y-4">
                 <div class="flex justify-between items-center p-4 border-b border-gray-100">
-                    <div>
-                        <div class="font-medium">삼성카드</div>
-                        <div class="text-sm text-gray-500">2025년 4월 1일</div>
-                    </div>
-                    <div class="text-right">
-                        <div class="font-bold text-green-500">+ ₩ 500,000</div>
-                        <div class="text-sm text-gray-500">카드 결제</div>
-                    </div>
                 </div>
 
                 <div class="flex justify-between items-center p-4 border-b border-gray-100">
@@ -146,37 +121,6 @@
             </div>
         </div>
 
-        <div class="mt-8 bg-white rounded-3xl p-8 shadow-lg">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-bold text-chick-brown">입금 혜택</h3>
-                <div class="text-3xl animate-float">🎁</div>
-            </div>
-
-            <div class="bg-gradient-to-r from-chick-light to-chick-yellow rounded-xl p-6 mb-4">
-                <div class="flex items-start gap-4">
-                    <div class="text-2xl">🎯</div>
-                    <div>
-                        <h4 class="font-bold text-chick-brown mb-1">포인트 적립</h4>
-                        <p class="text-sm">입금 금액의 0.5%가 Chick Pay 포인트로 적립되었습니다.</p>
-                        <div class="mt-2 font-medium">+ 2,500 포인트</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-r from-chick-light to-chick-yellow rounded-xl p-6">
-                <div class="flex items-start gap-4">
-                    <div class="text-2xl">🏆</div>
-                    <div>
-                        <h4 class="font-bold text-chick-brown mb-1">등급 혜택</h4>
-                        <p class="text-sm">골드 등급 회원은 다음 입금 시 1% 추가 적립 혜택을 받습니다.</p>
-                        <div class="mt-2">
-                            <span class="bg-chick-orange text-chick-brown px-3 py-1 rounded-full text-xs font-medium">골드
-                                등급</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </main>
 {% endblock %}
