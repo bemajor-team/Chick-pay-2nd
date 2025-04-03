@@ -52,26 +52,46 @@ class Cash(models.Model):
         if self.balance >= amount:
             self.balance -= amount
             self.save()
+
             return True
         return False
 
     def __str__(self):
         return f"{self.user.email} - Balance: {self.balance}"
 
-
-class CashTransaction(models.Model):
-    TRANSACTION_TYPES = (
-        ('deposit', '입금'),
-        ('withdraw', '출금'),
-    )
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
+class CashTransfer(models.Model):
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_transfers')
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_transfers')
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     memo = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"[{self.get_transaction_type_display()}] {self.user.name} - {self.amount}원"
+        return f"{self.sender.email} → {self.receiver.email}: {self.amount}원"
 
+
+
+class CashTransaction(models.Model):
+    TRANSACTION_TYPES = (
+        ('deposit', '입금'),
+        ('withdraw', '출금'),
+        ('transfer', '송금'),  # ✅ 튜플 형식!
+    )
+    transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
+
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    memo = models.CharField(max_length=255, blank=True, null=True)
+    related_transfer = models.ForeignKey(
+        'CashTransfer',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='transactions'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"[{self.get_transaction_type_display()}] {self.user.name} - {self.amount}원"
 

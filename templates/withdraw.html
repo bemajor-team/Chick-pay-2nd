@@ -1,112 +1,22 @@
 {% extends 'base.html' %}
-{% block title %}Chick Pay - 입금하기{% endblock %}
+{% block title %}Chick Pay - 출금하기{% endblock %}
 
 {% block content %}
 
 <main class="container mx-auto px-4 py-10 flex-grow">
   <div class="max-w-2xl mx-auto">
     <h2 class="text-3xl font-bold text-chick-brown mb-8 text-center">
-      입금하기
+      출금하기
     </h2>
 
     <div class="bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow">
-      <form id="deposit-form">
+      <form id="withdraw-form" method="POST" action="{% url 'cash-withdraw' %}">
+        {% csrf_token %}
         <div class="mb-6">
-          <label for="to-account" class="block mb-2 font-semibold text-gray-600">입금 계좌</label>
-          <select id="to-account" required
-            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
-            <option value="" disabled selected>
-              입금 계좌를 선택하세요
-            </option>
-            <option value="kb">
-              KB국민은행 123-456-789012 (잔액: ₩1,250,000)
-            </option>
-            <option value="shinhan">
-              신한은행 987-654-321098 (잔액: ₩3,750,000)
-            </option>
-            <option value="hana">
-              하나은행 111-222-333444 (잔액: ₩850,000)
-            </option>
-          </select>
-        </div>
-
-        <div class="mb-6">
-          <label for="deposit-method" class="block mb-2 font-semibold text-gray-600">입금 방법</label>
-          <div class="grid grid-cols-2 gap-4">
-            <button type="button"
-              class="bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
-              onclick="selectDepositMethod('card')">
-              <span class="text-2xl">💳</span>
-              <span>카드 입금</span>
-            </button>
-            <button type="button"
-              class="bg-white text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md border-2 border-chick-yellow hover:bg-chick-light transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
-              onclick="selectDepositMethod('account')">
-              <span class="text-2xl">🏦</span>
-              <span>계좌 입금</span>
-            </button>
-          </div>
-          <input type="hidden" id="deposit-method-input" value="card" />
-        </div>
-
-        <div id="card-deposit-section">
-          <div class="mb-6">
-            <label for="card-number" class="block mb-2 font-semibold text-gray-600">카드 번호</label>
-            <input type="text" id="card-number" placeholder="0000 0000 0000 0000" maxlength="19" required
-              class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
-          </div>
-
-          <div class="grid grid-cols-2 gap-4 mb-6">
-            <div>
-              <label for="expiry-date" class="block mb-2 font-semibold text-gray-600">만료일</label>
-              <input type="text" id="expiry-date" placeholder="MM/YY" maxlength="5" required
-                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
-            </div>
-            <div>
-              <label for="cvv" class="block mb-2 font-semibold text-gray-600">CVV</label>
-              <input type="text" id="cvv" placeholder="123" maxlength="3" required
-                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
-            </div>
-          </div>
-        </div>
-
-        <div id="account-deposit-section" class="hidden">
-          <div class="mb-6">
-            <label for="from-bank" class="block mb-2 font-semibold text-gray-600">출금 은행</label>
-            <select id="from-bank" required
-              class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
-              <option value="" disabled selected>
-                출금 은행을 선택하세요
-              </option>
-              <option value="kb">KB국민은행</option>
-              <option value="shinhan">신한은행</option>
-              <option value="woori">우리은행</option>
-              <option value="hana">하나은행</option>
-              <option value="nh">농협은행</option>
-              <option value="ibk">기업은행</option>
-              <option value="kakao">카카오뱅크</option>
-              <option value="toss">토스뱅크</option>
-            </select>
-          </div>
-
-          <div class="mb-6">
-            <label for="from-account" class="block mb-2 font-semibold text-gray-600">출금 계좌번호</label>
-            <input type="text" id="from-account" placeholder="계좌번호를 입력하세요 (- 없이)" required
-              class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
-          </div>
-
-          <div class="mb-6">
-            <label for="account-password" class="block mb-2 font-semibold text-gray-600">계좌 비밀번호</label>
-            <input type="password" id="account-password" placeholder="계좌 비밀번호 4자리" maxlength="4" required
-              class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
-          </div>
-        </div>
-
-        <div class="mb-6">
-          <label for="amount" class="block mb-2 font-semibold text-gray-600">입금 금액</label>
+          <label for="amount" class="block mb-2 font-semibold text-gray-600">출금 금액</label>
           <div class="relative">
             <span class="absolute left-3 top-3 text-gray-500">₩</span>
-            <input type="number" id="amount" placeholder="0" required min="1000" step="1000"
+            <input type="number" id="amount" name="amount" placeholder="0" required min="10" step="1"
               class="w-full p-3 pl-8 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition" />
           </div>
         </div>
@@ -119,41 +29,151 @@
 
         <button type="submit"
           class="w-full bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0">
-          입금하기 🐥
+          출금하기 🐥
         </button>
       </form>
     </div>
 
-    <div class="mt-8 bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow">
-      <h3 class="text-xl font-bold text-chick-brown mb-4">입금 안내</h3>
-
-      <div class="space-y-4 text-gray-600">
-        <div class="flex items-start gap-3">
-          <div class="text-xl text-chick-orange">1️⃣</div>
-          <p>입금하실 계좌를 선택해주세요.</p>
-        </div>
-        <div class="flex items-start gap-3">
-          <div class="text-xl text-chick-orange">2️⃣</div>
-          <p>카드 입금 또는 계좌 입금 중 원하시는 방법을 선택해주세요.</p>
-        </div>
-        <div class="flex items-start gap-3">
-          <div class="text-xl text-chick-orange">3️⃣</div>
-          <p>입금 정보를 정확히 입력해주세요.</p>
-        </div>
-        <div class="flex items-start gap-3">
-          <div class="text-xl text-chick-orange">4️⃣</div>
-          <p>입금 금액을 입력하고 입금하기 버튼을 클릭하세요.</p>
-        </div>
-        <div class="flex items-start gap-3">
-          <div class="text-xl text-chick-orange">5️⃣</div>
-          <p>입금이 완료되면 계좌 잔액에 즉시 반영됩니다.</p>
-        </div>
-      </div>
     </div>
   </div>
 </main>
 
-<script>
+
+<!-- <main class="container mx-auto px-4 py-10 flex-grow">
+  <div class="max-w-2xl mx-auto">
+      <h2 class="text-3xl font-bold text-chick-brown mb-8 text-center">출금하기</h2>
+      
+      <div class="bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow">
+          <form id="withdraw-form">
+              <div class="mb-6">
+                  <label for="from-account" class="block mb-2 font-semibold text-gray-600">출금 계좌</label>
+                  <select id="from-account" required
+                      class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                      <option value="" disabled selected>출금 계좌를 선택하세요</option>
+                      <option value="kb">KB국민은행 123-456-789012 (잔액: ₩1,250,000)</option>
+                      <option value="shinhan">신한은행 987-654-321098 (잔액: ₩3,750,000)</option>
+                      <option value="hana">하나은행 111-222-333444 (잔액: ₩850,000)</option>
+                  </select>
+              </div>
+              
+              <div class="mb-6">
+                  <label for="withdraw-method" class="block mb-2 font-semibold text-gray-600">출금 방법</label>
+                  <div class="grid grid-cols-2 gap-4">
+                      <button type="button" class="bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2" onclick="selectWithdrawMethod('card')">
+                          <span class="text-2xl">💳</span>
+                          <span>카드 출금</span>
+                      </button>
+                      <button type="button" class="bg-white text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md border-2 border-chick-yellow hover:bg-chick-light transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2" onclick="selectWithdrawMethod('account')">
+                          <span class="text-2xl">🏦</span>
+                          <span>계좌 이체</span>
+                      </button>
+                  </div>
+                  <input type="hidden" id="withdraw-method-input" value="card">
+              </div>
+              
+              <div id="card-withdraw-section">
+                  <div class="mb-6">
+                      <label for="card-number" class="block mb-2 font-semibold text-gray-600">카드 번호</label>
+                      <input type="text" id="card-number" placeholder="0000 0000 0000 0000" maxlength="19" required
+                          class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                  </div>
+                  
+                  <div class="grid grid-cols-2 gap-4 mb-6">
+                      <div>
+                          <label for="expiry-date" class="block mb-2 font-semibold text-gray-600">만료일</label>
+                          <input type="text" id="expiry-date" placeholder="MM/YY" maxlength="5" required
+                              class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                      </div>
+                      <div>
+                          <label for="cvv" class="block mb-2 font-semibold text-gray-600">CVV</label>
+                          <input type="text" id="cvv" placeholder="123" maxlength="3" required
+                              class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                      </div>
+                  </div>
+              </div>
+              
+              <div id="account-withdraw-section" class="hidden">
+                  <div class="mb-6">
+                      <label for="to-bank" class="block mb-2 font-semibold text-gray-600">입금 은행</label>
+                      <select id="to-bank" required
+                          class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                          <option value="" disabled selected>입금 은행을 선택하세요</option>
+                          <option value="kb">KB국민은행</option>
+                          <option value="shinhan">신한은행</option>
+                          <option value="woori">우리은행</option>
+                          <option value="hana">하나은행</option>
+                          <option value="nh">농협은행</option>
+                          <option value="ibk">기업은행</option>
+                          <option value="kakao">카카오뱅크</option>
+                          <option value="toss">토스뱅크</option>
+                      </select>
+                  </div>
+                  
+                  <div class="mb-6">
+                      <label for="to-account" class="block mb-2 font-semibold text-gray-600">입금 계좌번호</label>
+                      <input type="text" id="to-account" placeholder="계좌번호를 입력하세요 (- 없이)" required
+                          class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                  </div>
+              </div>
+              
+              <div class="mb-6">
+                  <label for="account-password" class="block mb-2 font-semibold text-gray-600">계좌 비밀번호</label>
+                  <input type="password" id="account-password" placeholder="계좌 비밀번호 4자리" maxlength="4" required
+                      class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+              </div>
+              
+              <div class="mb-6">
+                  <label for="amount" class="block mb-2 font-semibold text-gray-600">출금 금액</label>
+                  <div class="relative">
+                      <span class="absolute left-3 top-3 text-gray-500">₩</span>
+                      <input type="number" id="amount" placeholder="0" required min="1000" step="1000"
+                          class="w-full p-3 pl-8 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+                  </div>
+              </div>
+              
+              <div class="mb-8">
+                  <label for="memo" class="block mb-2 font-semibold text-gray-600">메모 (선택사항)</label>
+                  <input type="text" id="memo" placeholder="메모를 입력하세요"
+                      class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
+              </div>
+              
+              <button type="submit" 
+                  class="w-full bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0">
+                  출금하기 🐥
+              </button>
+          </form>
+      </div>
+      
+      <div class="mt-8 bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow">
+          <h3 class="text-xl font-bold text-chick-brown mb-4">출금 안내</h3>
+          
+          <div class="space-y-4 text-gray-600">
+              <div class="flex items-start gap-3">
+                  <div class="text-xl text-chick-orange">1️⃣</div>
+                  <p>출금하실 계좌를 선택해주세요.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                  <div class="text-xl text-chick-orange">2️⃣</div>
+                  <p>카드 출금 또는 계좌 이체 중 원하시는 방법을 선택해주세요.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                  <div class="text-xl text-chick-orange">3️⃣</div>
+                  <p>출금 정보를 정확히 입력해주세요.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                  <div class="text-xl text-chick-orange">4️⃣</div>
+                  <p>계좌 비밀번호는 보안을 위해 안전하게 관리됩니다.</p>
+              </div>
+              <div class="flex items-start gap-3">
+                  <div class="text-xl text-chick-orange">5️⃣</div>
+                  <p>출금 금액을 입력하고 출금하기 버튼을 클릭하세요.</p>
+              </div>
+          </div>
+      </div>
+  </div>
+</main> -->
+
+<!-- <script>
   // 모바일 메뉴 토글
   const menuButton = document.querySelector("button");
   const nav = document.querySelector("nav");
@@ -296,5 +316,5 @@
         window.location.href = "deposit-complete.html";
       }, 1500);
     });
-</script>
+</script> -->
 {% endblock %}

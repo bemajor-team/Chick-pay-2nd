@@ -74,17 +74,27 @@
     <header class="bg-chick-yellow py-5 shadow-md">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between">
-                <a href="" class="flex items-center gap-3">
+                <a href="{% url 'main' %}" class="flex items-center gap-3">
                     <div class="text-4xl">🐥</div>
                     <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
                 </a>
+                
                 <nav class="hidden md:flex items-center gap-6">
-                    <a href="account" class="text-chick-brown font-medium hover:underline">계좌조회</a>
-                    <a href="transfer" class="text-chick-brown font-medium hover:underline">송금하기</a>
-                    <a href="deposit" class="text-chick-brown font-medium hover:underline">입금하기</a>
-                    <a href="withdraw" class="text-chick-brown font-medium hover:underline">출금하기</a>
-                    <a href="members/mypage" class="text-chick-brown font-medium hover:underline">마이페이지</a>
-                    <a href="login" class="text-chick-brown font-medium hover:underline">로그아웃</a>
+                    <a href="{% url 'account' %}" class="text-chick-brown font-medium hover:underline">계좌조회</a>
+                    <a href="{% url 'cash-transfer' %}" class="text-chick-brown font-medium hover:underline">송금하기</a>
+                    <a href="{% url 'cash-deposit' %}" class="text-chick-brown font-medium hover:underline">입금하기</a>
+                    <a href="{% url 'cash-withdraw' %}" class="text-chick-brown font-medium hover:underline">출금하기</a>
+                    <a href="{% url 'mypage' %}" class="text-chick-brown font-medium hover:underline">마이페이지</a>
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" class="inline flex items-center m-0">
+                      {% csrf_token %}
+                      <button type="submit" class="text-chick-brown font-medium hover:underline">
+                          로그아웃
+                      </button>
+                    </form>
+                    {% endif %}
+          
+
                 </nav>
                 <button class="md:hidden text-2xl">☰</button>
             </div>

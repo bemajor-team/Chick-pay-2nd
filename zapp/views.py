@@ -20,10 +20,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .models import Cash
-from .serializers import CashSerializer, CashTransactionSerializer
+from .serializers import CashSerializer, CashTransactionSerializer , TransferSerializer
 from .forms import PasswordChangeForm 
 from django.views import View
-from .models import CashTransaction
+from .models import CashTransaction , CustomUser ,CashTransfer  
+from django.core.paginator import Paginator
 
 class MainView(APIView):
     def get(self, request):
@@ -52,7 +53,7 @@ class LoginView(APIView):
         if form.is_valid():
             user = form.get_user()
             login(request, user)  # ✅ 세션 로그인 처리
-            return redirect('home')  # 로그인 후 이동할 페이지 이름
+            return redirect('main')  # 로그인 후 이동할 페이지 이름
         return render(request, 'login.html', {"form": form, "errors": form.errors})
 
 
@@ -61,8 +62,56 @@ class HomeView(APIView):
     def get(self, request):
         return render(request, 'home.html' )
         
+class MyPageView(APIView):
+    permission_classes = [IsAuthenticated]
 
-# zapp/views.py
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        cash = getattr(user, 'cash', None)
+        
+        # Accept 헤더 확인
+        if request.accepted_renderer.format == 'json':
+            serializer = MyPageSerializer(request.user)
+            return Response(serializer.data)
+
+        # HTML 응답
+        context = {
+            'name': user.name,
+            'email': user.email,
+            'birthdate': user.birthdate,
+            'balance': cash.balance if cash else 0.00,
+        }
+        return render(request, 'mypage.html', context)
+
+class PasswordChangeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        form = PasswordChangeForm(request.data)
+        
+        if form.is_valid():
+            user = request.user
+            current_password = form.cleaned_data['current_password']
+            new_password = form.cleaned_data['new_password']
+
+            if not user.check_password(current_password):
+                return render(request, 'change_password.html', {
+                    'form': form,
+                    'error': "현재 비밀번호가 일치하지 않습니다."
+                })
+
+            user.set_password(new_password)
+            user.save()
+            
+            # 비밀번호 변경 성공 시 로그인 페이지로 리다이렉트
+            return redirect('login')
+            
+            
+        return render(request, 'change_password.html', {
+            'form': form,
+            'errors': form.errors
+        })
+
 
 
 class CashDetailView(APIView):
@@ -72,6 +121,8 @@ class CashDetailView(APIView):
         cash, created = Cash.objects.get_or_create(user=request.user)
         serializer = CashSerializer(cash)
         return Response(serializer.data)
+
+
 
 class CashDepositView(APIView):
     permission_classes = [IsAuthenticated]
@@ -115,7 +166,7 @@ class DepositCompleteView(View):
         recent_deposits = CashTransaction.objects.filter(
             user=user,
             transaction_type='deposit'
-        ).order_by('-created_at')[:3]
+        ).order_by('-created_at')[:]
 
         if recent_deposits:
             latest_deposit_amount = recent_deposits[0].amount
@@ -131,154 +182,217 @@ class DepositCompleteView(View):
             
         }
 
-        
-
         return render(request, 'deposit-complete.html', context)
 
 class CashWithdrawView(APIView):
     permission_classes = [IsAuthenticated]
 
+
+    def get(self, request):
+         return render(request, 'withdraw.html')
+
     def post(self, request):
-        cash, created = Cash.objects.get_or_create(user=request.user)
+        cash, _ = Cash.objects.get_or_create(user=request.user)
         serializer = CashTransactionSerializer(data=request.data)
+
         if serializer.is_valid():
             amount = serializer.validated_data['amount']
-            if cash.withdraw(amount):
-                return Response({'message': f"{amount}원이 출금되었습니다.", 'balance': cash.balance})
-            else:
-                return Response({'error': '잔액이 부족합니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # ✅ 출금 시도
+            success = cash.withdraw(amount)
+
+            if not success:
+                messages.error(request._request, "잔액이 부족합니다.")
+                return redirect('cash-withdraw')
+
+            # ✅ 출금 성공 후 거래 기록
+            CashTransaction.objects.create(
+                user=request.user,
+                transaction_type='withdraw',
+                amount=amount,
+                memo=request.data.get('memo', '')
+            )
+
+            request.session['last_withdraw_amount'] = float(amount)
+            return redirect('withdraw-complete')
+
+        if request.accepted_renderer.format == 'html':
+            messages.error(request._request, "출금 금액이 올바르지 않습니다.")
+            return redirect('cash-withdraw')
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# error패스워드
-
-class PasswordChangeView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        form = PasswordChangeForm(request.data)
+class WithdrawCompleteView(View):
+    def get(self, request):
+        user = request.user
         
-        if form.is_valid():
-            user = request.user
-            current_password = form.cleaned_data['current_password']
-            new_password = form.cleaned_data['new_password']
+        cash = getattr(user, 'cash', None)
 
-            if not user.check_password(current_password):
-                return render(request, 'change_password.html', {
-                    'form': form,
-                    'error': "현재 비밀번호가 일치하지 않습니다."
-                })
+        recent_withdraws = CashTransaction.objects.filter(
+            user=user,
+            transaction_type='withdraw'
+        ).order_by('-created_at')[:]
 
-            user.set_password(new_password)
-            user.save()
-            
-            # 비밀번호 변경 성공 시 로그인 페이지로 리다이렉트
-            return redirect('login')
-            
-            
-        return render(request, 'change_password.html', {
-            'form': form,
-            'errors': form.errors
-        })
+        previous_balance = None
 
-class MyPageView(APIView):
+        if recent_withdraws:
+            latest_withdraw_amount = recent_withdraws[0].amount
+                   
+            previous_balance = cash.balance + latest_withdraw_amount
+        
+        context = {
+            'name': user.name,
+            'email': user.email,
+            'balance': cash.balance if cash else 0.00,
+            'recent_withdraws': recent_withdraws,
+            'previous_balance' : previous_balance,
+            
+        }
+
+        return render(request, 'withdraw-complete.html', context)
+
+
+
+class CashTransferView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         user = request.user
         cash = getattr(user, 'cash', None)
         
-        # Accept 헤더 확인
         if request.accepted_renderer.format == 'json':
             serializer = MyPageSerializer(request.user)
             return Response(serializer.data)
-
         # HTML 응답
         context = {
             'name': user.name,
             'email': user.email,
-            'birthdate': user.birthdate,
-            'balance': cash.balance if cash else 0.00,
         }
-        return render(request, 'mypage.html', context)
+        return render(request, 'transfer.html', context)
+        
+    def post(self, request):
+        data = {
+            'receiver_email': request.POST.get('receiver_email'),
+            'amount': request.POST.get('amount'),
+            'memo': request.POST.get('memo', '')
+        }
+        
+        serializer = TransferSerializer(data=data, context={'request': request})
+        if not serializer.is_valid():
+            for error in serializer.errors.values():
+                messages.error(request, error[0])
+            return redirect('transfer')
 
+        sender = request.user
+        receiver_email = serializer.validated_data['receiver_email']
+        amount = serializer.validated_data['amount']
+        memo = serializer.validated_data.get('memo', '')
 
-# class PasswordChangeView(APIView):
-#     permission_classes = [IsAuthenticated]
+        try:
+            receiver = CustomUser.objects.get(email=receiver_email)
+        except CustomUser.DoesNotExist:
+            messages.error(request, "받는 사람을 찾을 수 없습니다.")
+            return redirect('transfer')
 
-#     def post(self, request):
-#         serializer = PasswordChangeSerializer(data=request.data, context={'request': request})
-#         if serializer.is_valid():
-#             serializer.save()
-#             # ✅ 메시지 추가 (선택)
-#             messages.success(request._request, "비밀번호가 변경되었습니다.")
-#             return redirect('mypage')  # mypage URL로 이동
-#         # ❌ 실패 시도: 템플릿 없이 Response() 사용
-#         # => 여기서도 렌더링해줄 템플릿 필요하거나, 리다이렉트
-#         messages.error(request._request, "비밀번호 변경에 실패했습니다.")
-#         return redirect('mypage')  # 실패 시도 동일한 페이지로
+        try:
+            # 금액 이체
+            if not sender.cash.withdraw(amount):
+                messages.error(request, "잔액이 부족합니다.")
+                return redirect('transfer')
+            receiver.cash.deposit(amount)
 
-# 🔐 비밀번호 변경
+            # 송금 기록 저장
+            transfer = CashTransfer.objects.create(
+                sender=sender,
+                receiver=receiver,
+                amount=amount,
+                memo=memo
+            )
 
-# class PasswordChangeView(APIView):
-#     permission_classes = [IsAuthenticated]
+            # 거래 기록 저장
 
-#     def post(self, request):
-#         serializer = PasswordChangeSerializer(data=request.data, context={'request': request})
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response({'message': '비밀번호가 변경되었습니다.'})
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            CashTransaction.objects.create(
+                user=sender,
+                transaction_type='transfer',  # 송금 타입으로 변경
+                amount=amount,
+                memo=f"{receiver.email}님에게 송금",
+                related_transfer=transfer  # 관련 송금 기록 연결
+            )
 
+            CashTransaction.objects.create(
+                user=receiver,
+                transaction_type='deposit',  # 받는 입장에서 입금이니까!
+                amount=amount,
+                memo=f"{sender.email}로부터 입금",
+                related_transfer=transfer
+            )
 
+            request.session['last_transfer_amount'] = float(amount)
+            request.session['last_receiver_name'] = receiver.name
+            return redirect('transfer-complete')
+                
+        except Exception as e:
+            print(f"송금 처리 중 오류 발생: {str(e)}")  # 디버깅용
+            messages.error(request, "송금 처리 중 오류가 발생했습니다.")
+            return redirect('transfer')
 
-# # 👤 마이페이지 정보 조회
-# class MyPageView(APIView):
-#     permission_classes = [IsAuthenticated]
+class TransferCompleteView(View):
+    def get(self, request):
+        user = request.user
 
-#     def get(self, request, *args, **kwargs):
-#         # 브라우저에서 보통 HTML을 원할 때 Accept 헤더가 아래처럼 오기 때문에
-#         accept = request.META.get('HTTP_ACCEPT', '')
+        # 최근 송금 내역 1건 (CashTransfer에서)
+        latest_transfer = CashTransfer.objects.filter(sender=user).order_by('-created_at').first()
 
-#         if 'application/json' in accept:
-#             # 🔁 JSON 응답 (API 요청)
-#             serializer = MyPageSerializer(request.user)
-#             return Response(serializer.data)
+        context = {
+            'sender_email': user.email,
+            'receiver_email': latest_transfer.receiver.email if latest_transfer else '',
+            'receiver_name': latest_transfer.receiver.name if latest_transfer else '',
+            'amount': latest_transfer.amount if latest_transfer else 0.00,
+            'memo': latest_transfer.memo if latest_transfer and latest_transfer.memo else '',
+            'created_at': latest_transfer.created_at if latest_transfer else None, 
+        }
 
-#         # 🖼️ 템플릿 렌더링 (브라우저 요청)
+        return render(request, 'transfer-complete.html', context)
+
+# #account view
+# class AllTransactionView(View):
+#     def get(self, request):
 #         user = request.user
+
 #         cash = getattr(user, 'cash', None)
 
+#         # 해당 유저의 전체 거래 내역 (최신순)
+#         transactions = CashTransaction.objects.filter(user=user).order_by('-created_at')
+
 #         context = {
+#             'transactions': transactions,
 #             'name': user.name,
 #             'email': user.email,
-#             'birthdate': user.birthdate,
 #             'balance': cash.balance if cash else 0.00,
 #         }
-
-#         return render(request, 'mypage.html', context)
-
-
-# class MyPageView(APIView):
-#     permission_classes = [IsAuthenticated]
-#     renderer_classes = [JSONRenderer, TemplateHTMLRenderer]
-
-#     def get(self, request, *args, **kwargs):
-#         if request.accepted_renderer.format == 'html':
-#             # 🖼️ HTML 템플릿 렌더링
-#             user = request.user
-#             cash = getattr(user, 'cash', None)
-
-#             context = {
-#                 'name': user.name,
-#                 'email': user.email,
-#                 'birthdate': user.birthdate,
-#                 'balance': cash.balance if cash else 0.00,
-#             }
-
-#             return Response(context, template_name='mypage.html')
-
-#         # 🔁 JSON API 응답
-#         serializer = MyPageSerializer(request.user)
-#         return Response(serializer.data)
+#         return render(request, 'account.html', context)
 
 
+
+class AllTransactionView(View):
+    def get(self, request):
+        user = request.user
+        cash = getattr(user, 'cash', None)
+
+        # 전체 거래 내역 최신순
+        transaction_list = CashTransaction.objects.filter(user=user).order_by('-created_at')
+
+        # ✅ 페이지네이션 처리: 한 페이지에 5개씩
+        paginator = Paginator(transaction_list, 5)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            'transactions': page_obj,  # 페이징된 거래 목록
+            'name': user.name,
+            'email': user.email,
+            'balance': cash.balance if cash else 0.00,
+            'page_obj': page_obj,  # 템플릿에서 페이지네이션 정보에 사용
+        }
+
+        return render(request, 'account.html', context)
