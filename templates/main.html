@@ -5,20 +5,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- 공통 CSS, 스크립트 등 -->
-  <!-- <script>
-      tailwind.config = {
-          theme: {
-              extend: {
-                  colors: {
-                      "chick-yellow": "#FFDE59",
-                      "chick-orange": "#FFC93C",
-                      "chick-brown": "#B85C38",
-                      "chick-light": "#FFF9E5",
-                  },
-              },
-          },
-      };
-  </script> -->
+
   <script>
     tailwind.config = {
       theme: {
@@ -63,8 +50,7 @@
     }
   </style>
 
-</head>
-
+</head>  
 <body class="bg-chick-light text-gray-800 leading-relaxed min-h-screen flex flex-col">
   <!-- 공유할 헤더 내용 -->
   <header class="bg-chick-yellow py-5 shadow-md">
@@ -72,15 +58,26 @@
       <div class="flex items-center justify-between">
         <a href="" class="flex items-center gap-3">
           <div class="text-4xl">🐥</div>
-          <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
+          <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1> 
+          {% if user.is_authenticated %}
+          <p class="text-lg text-grey-700">안녕하세요, <strong>{{ user.name }}</strong>님!</p>
+          {% endif %}
         </a>
         <nav class="hidden md:flex items-center gap-6">
-          <a href="account" class="text-chick-brown font-medium hover:underline">계좌조회</a>
-          <a href="transfer" class="text-chick-brown font-medium hover:underline">송금하기</a>
-          <a href="deposit" class="text-chick-brown font-medium hover:underline">입금하기</a>
-          <a href="withdraw" class="text-chick-brown font-medium hover:underline">출금하기</a>
-          <a href="members/mypage" class="text-chick-brown font-medium hover:underline">마이페이지</a>
-          <a href="login" class="text-chick-brown font-medium hover:underline">로그아웃</a>
+          <a href="{% url 'account' %}" class="text-chick-brown font-medium hover:underline">계좌조회</a>
+          <a href="{% url 'cash-transfer' %}" class="text-chick-brown font-medium hover:underline">송금하기</a>
+          <a href="{% url 'cash-deposit' %}" class="text-chick-brown font-medium hover:underline">입금하기</a>
+          <a href="{% url 'cash-withdraw' %}" class="text-chick-brown font-medium hover:underline">출금하기</a>
+          <a href="{% url 'mypage' %}" class="text-chick-brown font-medium hover:underline">마이페이지</a>
+          {% if user.is_authenticated %}
+          <form method="post" action="{% url 'logout' %}" class="inline flex items-center m-0">
+            {% csrf_token %}
+            <button type="submit" class="text-chick-brown font-medium hover:underline">
+                로그아웃
+            </button>
+          </form>
+          {% endif %}
+
         </nav>
         <button class="md:hidden text-2xl">☰</button>
       </div>
@@ -98,21 +95,32 @@
             Chick Pay와 함께 간편하고 안전하게 송금, 입금, 출금을
             경험해보세요. 귀여운 디자인과 함께 금융 생활이 더욱 즐거워집니다.
           </p>
+
           <div class="flex flex-wrap gap-4">
-            <a href="login.html"
+            {% if not user.is_authenticated %}
+            <a href="{% url 'login' %}"
               class="bg-chick-brown text-white font-bold py-3 px-8 rounded-xl shadow-md hover:bg-opacity-90 transition transform hover:-translate-y-0.5 active:translate-y-0">
               로그인하기
             </a>
-            <a href="register.html"
+            <a href="{% url 'register' %}"
               class="bg-white text-chick-brown font-bold py-3 px-8 rounded-xl shadow-md border-2 border-chick-brown hover:bg-chick-light transition transform hover:-translate-y-0.5 active:translate-y-0">
               회원가입
             </a>
+            {% endif %}
+
           </div>
+
+
+        {% load static %}
+        <img src="{% static 'chick.png' %}" alt="chick">
+
+
+        
         </div>
         <div class="md:w-1/2 flex justify-center">
           <div class="relative">
             <div class="w-64 h-64 md:w-80 md:h-80 bg-white rounded-full shadow-xl flex items-center justify-center">
-              <div class="text-9xl animate-float">🐥</div>
+              <div class="text-9xl animate-float"><img src="{% static 'images/chick.png' %}" alt="병아리" class="w-24 h-24 mx-auto"> </div>
             </div>
             <div
               class="absolute -top-5 -right-5 bg-chick-orange text-chick-brown text-sm font-bold py-2 px-4 rounded-full shadow-md transform rotate-12">
@@ -174,7 +182,7 @@
     </div>
   </section>
 
-  <section class="py-16 bg-white">
+  <!-- <section class="py-16 bg-white">
     <div class="container mx-auto px-4">
       <div class="flex flex-col md:flex-row items-center gap-12">
         <div class="md:w-1/2">
@@ -218,7 +226,7 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
 
   <section class="py-16 bg-chick-light">
     <div class="container mx-auto px-4 text-center">
@@ -240,7 +248,7 @@
             "지출 분석 기능이 정말 유용해요. 덕분에 불필요한 지출을 줄이고
             저축을 늘릴 수 있었습니다. 강력 추천합니다!"
           </p>
-          <div class="font-bold">김수진, 32세</div>
+          <div class="font-bold">김수진, 17세</div>
         </div>
 
         <div class="bg-white rounded-3xl p-8 shadow-lg">
@@ -249,34 +257,12 @@
             "보안이 철저하면서도 사용이 간편해요. 특히 자동 저축 기능 덕분에
             목표 금액을 쉽게 모을 수 있었습니다."
           </p>
-          <div class="font-bold">엄현진, 29세</div>
+          <div class="font-bold">엄현진, 20세</div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="py-16 bg-gradient-to-b from-chick-light to-chick-yellow">
-    <div class="container mx-auto px-4 text-center">
-      <h2 class="text-3xl font-bold text-chick-brown mb-6">
-        지금 바로 시작하세요
-      </h2>
-      <p class="text-lg mb-8 max-w-2xl mx-auto">
-        Chick Pay와 함께 더 귀엽고 편리한 금융 생활을 경험해보세요. 지금
-        가입하면 첫 송금 수수료가 무료!
-      </p>
-
-      <div class="flex flex-wrap justify-center gap-4">
-        <a href="login.html"
-          class="bg-chick-brown text-white font-bold py-3 px-8 rounded-xl shadow-md hover:bg-opacity-90 transition transform hover:-translate-y-0.5 active:translate-y-0">
-          로그인하기
-        </a>
-        <a href="register.html"
-          class="bg-white text-chick-brown font-bold py-3 px-8 rounded-xl shadow-md border-2 border-chick-brown hover:bg-chick-light transition transform hover:-translate-y-0.5 active:translate-y-0">
-          회원가입
-        </a>
-      </div>
-    </div>
-  </section>
 
   <footer class="bg-chick-yellow py-8">
     <div class="container mx-auto px-4">

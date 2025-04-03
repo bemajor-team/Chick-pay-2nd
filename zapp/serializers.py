@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from django.contrib.auth import password_validation
+from django.contrib.auth import get_user_model , password_validation
 from .models import CustomUser, Cash
 
+User = get_user_model()  # 이 부분 추가
 # 🔐 회원가입 Serializer
 class RegisterSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(write_only=True)
@@ -81,13 +82,26 @@ class MyPageSerializer(serializers.ModelSerializer):
 class TransferSerializer(serializers.Serializer):
     receiver_email = serializers.EmailField()
     amount = serializers.DecimalField(max_digits=12, decimal_places=2)
-    memo = serializers.CharField(allow_blank=True, required=False)
+    memo = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
-    def validate(self, data):
-        sender = self.context['request'].user
-        amount = data['amount']
-        if amount <= 0:
-            raise serializers.ValidationError("송금 금액은 0보다 커야 합니다.")
-        if sender.cash.balance < amount:
+    def validate_amount(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("송금액은 0보다 커야 합니다.")
+        
+        user = self.context['request'].user
+        if user.cash.balance < value:
             raise serializers.ValidationError("잔액이 부족합니다.")
-        return data
+        return value
+
+    def validate_receiver_email(self, value):
+        user = self.context['request'].user
+        if user.email == value:
+            raise serializers.ValidationError("자신에게는 송금할 수 없습니다.")
+        
+        try:
+            CustomUser.objects.get(email=value)  # User 대신 CustomUser 사용
+        except CustomUser.DoesNotExist:
+            raise serializers.ValidationError("존재하지 않는 사용자입니다.")
+            
+        return value
+

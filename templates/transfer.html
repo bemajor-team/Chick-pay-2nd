@@ -7,7 +7,7 @@
         <h2 class="text-3xl font-bold text-chick-brown mb-8 text-center">송금하기</h2>
 
         <div class="bg-white rounded-3xl shadow-lg p-8 border-3 border-chick-yellow">
-            <form id="transfer-form" action="{% url 'transfer' %}" method="POST">
+            <form id="transfer-form" action="{% url 'cash-transfer' %}" method="POST">
                 {% csrf_token %}
                 
                 <div class="mb-6">

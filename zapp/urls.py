@@ -18,6 +18,9 @@ urlpatterns = [
     path('cash/withdraw/', CashWithdrawView.as_view(), name='cash-withdraw'),
     path('cash/withdraw/complete', WithdrawCompleteView.as_view(), name='withdraw-complete'),
     path('cash/transfer/', CashTransferView.as_view(), name='cash-transfer'),
+    path('cash/transfer/complete', TransferCompleteView.as_view(), name='transfer-complete'),
+
+    path('account/', AllTransactionView.as_view(), name='account'),
 
     
 ]

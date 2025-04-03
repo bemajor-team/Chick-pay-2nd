@@ -151,3 +151,5 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': (
     #     'rest_framework.permissions.IsAuthenticated',  # 옵션: 인증된 사용자만 허용
     # ),
+
+STATIC_URL = '/static/'
