@@ -58,6 +58,17 @@ class Cash(models.Model):
     def __str__(self):
         return f"{self.user.email} - Balance: {self.balance}"
 
+class CashTransfer(models.Model):
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_transfers')
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_transfers')
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    memo = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender.email} → {self.receiver.email}: {self.amount}원"
+
+
 
 class CashTransaction(models.Model):
     TRANSACTION_TYPES = (

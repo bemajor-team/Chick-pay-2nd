@@ -79,72 +79,168 @@
                 </div>
             </div>
         </div>
-
-
-
-
-
-
-        <!-- <h3 class="">최근 입금 내역</h3>
-        {% for tx in recent_deposits %}
-        <div class="">
-            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 shadow">
-              <p class="text-sm text-gray-700 font-semibold">입금 금액</p>
-              <p class="text-xl font-bold text-chick-brown">
-                ₩ {{ tx.amount|floatformat:"0" }}
-              </p>
-              <p class="text-sm text-gray-500 mt-2">
-                {{ tx.created_at|date:"Y년 n월 j일 H:i" }}
-              </p>
-              {% if tx.memo %}
-                <p class="text-sm text-gray-600 mt-1">메모: {{ tx.memo }}</p>
-              {% endif %}
-            </div>
-          {% empty %}
-            <p class="text-gray-400">입금 내역이 없습니다.</p>
-          {% endfor %}
-        </div> -->
-
-        <div class="bg-white rounded-3xl p-8 shadow-lg">
-            <h3 class="text-xl font-bold text-chick-brown mb-6">최근 입금 내역</h3>
-        
-            <div class="space-y-4">
-                {% for tx in recent_deposits %}
-                    <div class="flex justify-between items-center p-4 {% if not forloop.last %}border-b border-gray-100{% endif %}">
-                        <div>
-                            <div class="font-medium">
-                                {% if tx.bank_name %}
-                                    {{ tx.bank_name }}
-                                {% else %}
-                                    입금
-                                {% endif %}
-                            </div>
-                            <div class="text-sm text-gray-500">
-                                {{ tx.created_at|date:"Y년 n월 j일 H:i" }}
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-bold text-green-500">+ ₩ {{ tx.amount|floatformat:"0"|intcomma }}</div>
-                            <div class="text-sm text-gray-500">
-                                {% if tx.transaction_method %}
-                                    {{ tx.transaction_method }}
-                                {% else %}
-                                    계좌 이체
-                                {% endif %}
-                            </div>
-                        </div>
+<!-- ================================최근 입금 내역==================================== -->
+<!-- 최신입금내역 3개  -->
+    <div class="bg-white rounded-3xl p-8 shadow-lg">
+        <h3 class="text-xl font-bold text-chick-brown mb-6">최근 입금 내역</h3>
+    
+        <div class="space-y-4">
+            <!-- 첫 번째 최신 입금 -->
+            {% if recent_deposits.0 %}
+            <div class="flex justify-between items-center p-4 border-b border-gray-100">
+                <div>
+                    <div class="font-medium">
+                        {% if recent_deposits.0.bank_name %}
+                            {{ recent_deposits.0.bank_name }}
+                        {% else %}
+                            입금
+                        {% endif %}
                     </div>
-                {% empty %}
-                    <div class="text-center text-gray-500 py-4">
-                        입금 내역이 없습니다.
+                    <div class="text-sm text-gray-500">
+                        {{ recent_deposits.0.created_at|date:"Y년 n월 j일 H:i" }}
                     </div>
-                {% endfor %}
+                </div>
+                <div class="text-right">
+                    <div class="font-bold text-green-500">+ ₩ {{ recent_deposits.0.amount|floatformat:"0"|intcomma }}</div>
+                    <div class="text-sm text-gray-500">
+                        {% if recent_deposits.0.transaction_method %}
+                            {{ recent_deposits.0.transaction_method }}
+                        {% else %}
+                            계좌 이체
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-        
+            {% endif %}
+    
+            <!-- 두 번째 최신 입금 -->
+            {% if recent_deposits.1 %}
+            <div class="flex justify-between items-center p-4 border-b border-gray-100">
+                <div>
+                    <div class="font-medium">
+                        {% if recent_deposits.1.bank_name %}
+                            {{ recent_deposits.1.bank_name }}
+                        {% else %}
+                            입금
+                        {% endif %}
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        {{ recent_deposits.1.created_at|date:"Y년 n월 j일 H:i" }}
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="font-bold text-green-500">+ ₩ {{ recent_deposits.1.amount|floatformat:"0"|intcomma }}</div>
+                    <div class="text-sm text-gray-500">
+                        {% if recent_deposits.1.transaction_method %}
+                            {{ recent_deposits.1.transaction_method }}
+                        {% else %}
+                            계좌 이체
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+    
+            <!-- 세 번째 최신 입금 -->
+            {% if recent_deposits.2 %}
+            <div class="flex justify-between items-center p-4">
+                <div>
+                    <div class="font-medium">
+                        {% if recent_deposits.2.bank_name %}
+                            {{ recent_deposits.2.bank_name }}
+                        {% else %}
+                            입금
+                        {% endif %}
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        {{ recent_deposits.2.created_at|date:"Y년 n월 j일 H:i" }}
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="font-bold text-green-500">+ ₩ {{ recent_deposits.2.amount|floatformat:"0"|intcomma }}</div>
+                    <div class="text-sm text-gray-500">
+                        {% if recent_deposits.2.transaction_method %}
+                            {{ recent_deposits.2.transaction_method }}
+                        {% else %}
+                            계좌 이체
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+    
+            {% if not recent_deposits %}
+                <div class="text-center text-gray-500 py-4">
+                    입금 내역이 없습니다.
+                </div>
+            {% endif %}
+        </div>
+
+
             <div class="mt-6 text-center">
-                <a href="{}" class="text-chick-brown hover:underline text-sm">모든 입금 내역 보기</a>
+                <a href="#" onclick="toggleTransactions(event)" class="text-chick-brown hover:underline text-sm">모든 입금 내역 보기</a>
             </div>
+
+
+        <div id="fullTransactionList" class="container mx-auto px-4 py-8" style="display: none;">
+        <div class="bg-white rounded-3xl p-8 shadow-lg">
+        <h3 class="text-xl font-bold text-chick-brown mb-6">전체 입금 내역</h3>
+        
+        <div class="space-y-4">
+            {% for tx in recent_deposits %}
+                <div class="flex justify-between items-center p-4 {% if not forloop.last %}border-b border-gray-100{% endif %}">
+                    <div>
+                        <div class="font-medium">
+                            {% if tx.bank_name %}
+                                {{ tx.bank_name }}
+                            {% else %}
+                                입금
+                            {% endif %}
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            {{ tx.created_at|date:"Y년 n월 j일 H:i" }}
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold text-green-500">+ ₩ {{ tx.amount|floatformat:"0"|intcomma }}</div>
+                        <div class="text-sm text-gray-500">
+                            {% if tx.transaction_method %}
+                                {{ tx.transaction_method }}
+                            {% else %}
+                                계좌 이체
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center text-gray-500 py-4">
+                    입금 내역이 없습니다.
+                </div>
+            {% endfor %}
+        </div>
         </div>
     </div>
 </main>
+
+
+<script>
+    function toggleTransactions(event) {
+        event.preventDefault(); // 기본 링크 동작 방지
+        
+        const transactionList = document.getElementById('fullTransactionList');
+        const button = event.target;
+    
+        if (transactionList.style.display === 'none') {
+            // 숨겨져 있을 때 -> 보여주기
+            transactionList.style.display = 'block';
+            button.textContent = '입금 내역 접기';
+        } else {
+            // 보여질 때 -> 숨기기
+            transactionList.style.display = 'none';
+            button.textContent = '모든 입금 내역 보기';
+        }
+    }
+    </script>
+
+    
 {% endblock %}
