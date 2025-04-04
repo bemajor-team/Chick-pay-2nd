@@ -3,6 +3,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Chick pay{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  from emoji import EMOJI_ALIAS_UNICODE_ENGLISH
+
 
   <!-- 공통 CSS, 스크립트 등 -->
 
@@ -50,7 +52,8 @@
     }
   </style>
 
-</head>  
+</head>
+
 <body class="bg-chick-light text-gray-800 leading-relaxed min-h-screen flex flex-col">
   <!-- 공유할 헤더 내용 -->
   <header class="bg-chick-yellow py-5 shadow-md">
@@ -58,7 +61,7 @@
       <div class="flex items-center justify-between">
         <a href="" class="flex items-center gap-3">
           <div class="text-4xl">🐥</div>
-          <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1> 
+          <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
           {% if user.is_authenticated %}
           <p class="text-lg text-grey-700">안녕하세요, <strong>{{ user.name }}</strong>님!</p>
           {% endif %}
@@ -73,7 +76,7 @@
           <form method="post" action="{% url 'logout' %}" class="inline flex items-center m-0">
             {% csrf_token %}
             <button type="submit" class="text-chick-brown font-medium hover:underline">
-                로그아웃
+              로그아웃
             </button>
           </form>
           {% endif %}
@@ -111,16 +114,11 @@
           </div>
 
 
-        {% load static %}
-        <img src="{% static 'chick.png' %}" alt="chick">
-
-
-        
         </div>
         <div class="md:w-1/2 flex justify-center">
           <div class="relative">
             <div class="w-64 h-64 md:w-80 md:h-80 bg-white rounded-full shadow-xl flex items-center justify-center">
-              <div class="text-9xl animate-float"><img src="{% static 'images/chick.png' %}" alt="병아리" class="w-24 h-24 mx-auto"> </div>
+              <div class="text-9xl animate-float">🐥</div>
             </div>
             <div
               class="absolute -top-5 -right-5 bg-chick-orange text-chick-brown text-sm font-bold py-2 px-4 rounded-full shadow-md transform rotate-12">
