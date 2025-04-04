@@ -14,7 +14,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .serializers import MyPageSerializer, PasswordChangeSerializer
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -25,6 +24,8 @@ from .forms import PasswordChangeForm
 from django.views import View
 from .models import CashTransaction , CustomUser ,CashTransfer  
 from django.core.paginator import Paginator
+from django.db import transaction
+
 
 class MainView(APIView):
     def get(self, request):
@@ -123,7 +124,6 @@ class CashDetailView(APIView):
         return Response(serializer.data)
 
 
-
 class CashDepositView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -135,26 +135,34 @@ class CashDepositView(APIView):
         serializer = CashTransactionSerializer(data=request.data)
 
         if serializer.is_valid():
-                amount = serializer.validated_data['amount']
-                cash.deposit(amount)
+            amount = serializer.validated_data['amount']
+            try:
+                with transaction.atomic():  # ✅ 트랜잭션 시작
+                    cash.deposit(amount)
 
-                CashTransaction.objects.create(
-                user=request.user,
-                transaction_type='deposit',
-                amount=amount,
-                memo=request.data.get('memo', '')  # 선택사항
-            )
+                    CashTransaction.objects.create(
+                        user=request.user,
+                        transaction_type='deposit',
+                        amount=amount,
+                        memo=request.data.get('memo', '')  # 선택사항
+                    )
 
-        # ✅ 세션에 금액 저장해서 완료 페이지에서 표시할 수 있게
+                # 성공 시 세션에 저장
                 request.session['last_deposit_amount'] = float(amount)
-
                 return redirect('deposit-complete')
 
-        if request.accepted_renderer.format == 'html':
-                messages.error(request._request, "입금 금액이 올바르지 않습니다.")
+            except Exception as e:
+                messages.error(request._request, "입금 처리 중 오류가 발생했습니다.")
                 return redirect('cash-deposit')
 
+        if request.accepted_renderer.format == 'html':
+            messages.error(request._request, "입금 금액이 올바르지 않습니다.")
+            return redirect('cash-deposit')
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 class DepositCompleteView(View):
@@ -184,12 +192,12 @@ class DepositCompleteView(View):
 
         return render(request, 'deposit-complete.html', context)
 
+
 class CashWithdrawView(APIView):
     permission_classes = [IsAuthenticated]
 
-
     def get(self, request):
-         return render(request, 'withdraw.html')
+        return render(request, 'withdraw.html')
 
     def post(self, request):
         cash, _ = Cash.objects.get_or_create(user=request.user)
@@ -198,29 +206,36 @@ class CashWithdrawView(APIView):
         if serializer.is_valid():
             amount = serializer.validated_data['amount']
 
-            # ✅ 출금 시도
-            success = cash.withdraw(amount)
+            try:
+                with transaction.atomic():  # ✅ 트랜잭션 시작
+                    success = cash.withdraw(amount)
 
-            if not success:
-                messages.error(request._request, "잔액이 부족합니다.")
+                    if not success:
+                        # 트랜잭션 내에서 실패하면 rollback 됨
+                        messages.error(request._request, "잔액이 부족합니다.")
+                        raise Exception("잔액 부족")
+
+                    CashTransaction.objects.create(
+                        user=request.user,
+                        transaction_type='withdraw',
+                        amount=amount,
+                        memo=request.data.get('memo', '')
+                    )
+
+                # 성공 시 세션 저장 및 리디렉션
+                request.session['last_withdraw_amount'] = float(amount)
+                return redirect('withdraw-complete')
+
+            except Exception:
+                # 트랜잭션 전체가 롤백됨
                 return redirect('cash-withdraw')
-
-            # ✅ 출금 성공 후 거래 기록
-            CashTransaction.objects.create(
-                user=request.user,
-                transaction_type='withdraw',
-                amount=amount,
-                memo=request.data.get('memo', '')
-            )
-
-            request.session['last_withdraw_amount'] = float(amount)
-            return redirect('withdraw-complete')
 
         if request.accepted_renderer.format == 'html':
             messages.error(request._request, "출금 금액이 올바르지 않습니다.")
             return redirect('cash-withdraw')
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class WithdrawCompleteView(View):
     def get(self, request):
@@ -252,31 +267,30 @@ class WithdrawCompleteView(View):
         return render(request, 'withdraw-complete.html', context)
 
 
-
 class CashTransferView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         user = request.user
         cash = getattr(user, 'cash', None)
-        
+
         if request.accepted_renderer.format == 'json':
             serializer = MyPageSerializer(request.user)
             return Response(serializer.data)
-        # HTML 응답
+
         context = {
             'name': user.name,
             'email': user.email,
         }
         return render(request, 'transfer.html', context)
-        
+
     def post(self, request):
         data = {
             'receiver_email': request.POST.get('receiver_email'),
             'amount': request.POST.get('amount'),
             'memo': request.POST.get('memo', '')
         }
-        
+
         serializer = TransferSerializer(data=data, context={'request': request})
         if not serializer.is_valid():
             for error in serializer.errors.values():
@@ -295,46 +309,52 @@ class CashTransferView(APIView):
             return redirect('transfer')
 
         try:
-            # 금액 이체
-            if not sender.cash.withdraw(amount):
-                messages.error(request, "잔액이 부족합니다.")
-                return redirect('transfer')
-            receiver.cash.deposit(amount)
+            with transaction.atomic():  # ✅ 트랜잭션 블록 시작
+                # 출금
+                if not sender.cash.withdraw(amount):
+                    messages.error(request._request, "잔액이 부족합니다.")
+                    raise Exception("잔액 부족")
 
-            # 송금 기록 저장
-            transfer = CashTransfer.objects.create(
-                sender=sender,
-                receiver=receiver,
-                amount=amount,
-                memo=memo
-            )
+                # 입금
+                receiver.cash.deposit(amount)
 
-            # 거래 기록 저장
+                # 송금 기록
+                transfer = CashTransfer.objects.create(
+                    sender=sender,
+                    receiver=receiver,
+                    amount=amount,
+                    memo=memo
+                )
 
-            CashTransaction.objects.create(
-                user=sender,
-                transaction_type='transfer',  # 송금 타입으로 변경
-                amount=amount,
-                memo=f"{receiver.email}님에게 송금",
-                related_transfer=transfer  # 관련 송금 기록 연결
-            )
+                # 거래 기록 (보내는 사람)
+                CashTransaction.objects.create(
+                    user=sender,
+                    transaction_type='transfer',
+                    amount=amount,
+                    memo=f"{receiver.email}님에게 송금",
+                    related_transfer=transfer
+                )
 
-            CashTransaction.objects.create(
-                user=receiver,
-                transaction_type='deposit',  # 받는 입장에서 입금이니까!
-                amount=amount,
-                memo=f"{sender.email}로부터 입금",
-                related_transfer=transfer
-            )
+                # 거래 기록 (받는 사람)
+                CashTransaction.objects.create(
+                    user=receiver,
+                    transaction_type='deposit',
+                    amount=amount,
+                    memo=f"{sender.email}로부터 입금",
+                    related_transfer=transfer
+                )
 
+            # ✅ 트랜잭션 성공 시 세션에 정보 저장
             request.session['last_transfer_amount'] = float(amount)
             request.session['last_receiver_name'] = receiver.name
             return redirect('transfer-complete')
-                
+
         except Exception as e:
             print(f"송금 처리 중 오류 발생: {str(e)}")  # 디버깅용
             messages.error(request, "송금 처리 중 오류가 발생했습니다.")
             return redirect('transfer')
+
+
 
 class TransferCompleteView(View):
     def get(self, request):
@@ -353,26 +373,6 @@ class TransferCompleteView(View):
         }
 
         return render(request, 'transfer-complete.html', context)
-
-# #account view
-# class AllTransactionView(View):
-#     def get(self, request):
-#         user = request.user
-
-#         cash = getattr(user, 'cash', None)
-
-#         # 해당 유저의 전체 거래 내역 (최신순)
-#         transactions = CashTransaction.objects.filter(user=user).order_by('-created_at')
-
-#         context = {
-#             'transactions': transactions,
-#             'name': user.name,
-#             'email': user.email,
-#             'balance': cash.balance if cash else 0.00,
-#         }
-#         return render(request, 'account.html', context)
-
-
 
 class AllTransactionView(View):
     def get(self, request):
