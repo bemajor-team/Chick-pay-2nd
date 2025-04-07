@@ -18,5 +18,5 @@ urlpatterns = [
     path('cash/transfer/', CashTransferView.as_view(), name='cash-transfer'),
     path('cash/transfer/complete', TransferCompleteView.as_view(), name='transfer-complete'),
     path('account/', AllTransactionView.as_view(), name='account'),
-    path('otp/setup/', otp_setup, name='otp_setup'),
+    path('otp/setup/', otp_setup, name='otp-setup'),
 ]
