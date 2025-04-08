@@ -22,6 +22,6 @@ jobs:
           port: 22
           script: |
             cd /home/ubuntu/Chick-pay
-            git pull origin main
+            git pull origin sub
             docker-compose down
             docker-compose up -d --build
