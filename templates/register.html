@@ -39,29 +39,6 @@
                     class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
             </div>
 
-            <!-- <div class="md:col-span-2">
-                        <label for="account" class="block mb-2 font-semibold text-gray-600">연결할 계좌번호</label>
-                        <input type="text" id="account" placeholder="계좌번호를 입력하세요 (- 없이)" required
-                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
-                    </div> -->
-
-            <!-- <div class="md:col-span-2">
-                        <label for="bank" class="block mb-2 font-semibold text-gray-600">은행</label>
-                        <select id="bank" required
-                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
-                            <option value="" disabled selected>은행을 선택하세요</option>
-                            <option value="kb">KB국민은행</option>
-                            <option value="shinhan">신한은행</option>
-                            <option value="woori">우리은행</option>
-                            <option value="hana">하나은행</option>
-                            <option value="nh">농협은행</option>
-                            <option value="ibk">기업은행</option>
-                            <option value="kakao">카카오뱅크</option>
-                            <option value="toss">토스뱅크</option>
-                        </select>
-                    </div>
-                </div> -->
-
             <div class="mt-6">
                 <div class="flex items-center mb-4">
                     <input type="checkbox" id="terms" required class="mr-2">
@@ -83,46 +60,4 @@
                 class="text-chick-brown font-semibold hover:underline">로그인</a></p>
     </div>
 </div>
-
-<!-- <script>
-        // 전화번호 형식 지정
-        document.getElementById('phone').addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 3 && value.length <= 7) {
-                value = value.substring(0, 3) + '-' + value.substring(3);
-            } else if (value.length > 7) {
-                value = value.substring(0, 3) + '-' + value.substring(3, 7) + '-' + value.substring(7, 11);
-            }
-            e.target.value = value;
-        });
-
-        // 계좌번호 숫자만 입력
-        document.getElementById('account').addEventListener('input', function (e) {
-            e.target.value = e.target.value.replace(/\D/g, '');
-        });
-
-        // 폼 제출 처리
-        document.getElementById('register-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            // 비밀번호 확인
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-
-            if (password !== confirmPassword) {
-                alert('비밀번호가 일치하지 않습니다.');
-                return;
-            }
-
-            // 회원가입 처리 시뮬레이션
-            const button = this.querySelector('button');
-            button.textContent = '처리 중...';
-            button.disabled = true;
-
-            setTimeout(() => {
-                // 회원가입 성공 후 로그인 페이지로 이동
-                window.location.href = 'login.html';
-            }, 1500);
-        });
-    </script> -->
 {% endblock %}

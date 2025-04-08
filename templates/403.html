@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Chick Pay - 접근 거부{% endblock %}
+
+{% block content %}
+{% load humanize %}
+<main class="flex-grow flex items-center justify-center py-16 px-4">
+    <div class="max-w-3xl w-full bg-white rounded-3xl shadow-xl p-8 md:p-12 text-center">
+        <div class="relative mb-8 mx-auto w-48 h-48">
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="text-9xl animate-float">🐥</div>
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center opacity-70">
+                <div class="w-32 h-32 bg-red-100 rounded-full"></div>
+            </div>
+            <div class="absolute top-0 right-0">
+                <div class="text-5xl animate-shake">🚫</div>
+            </div>
+        </div>
+
+        <h1 class="text-4xl md:text-5xl font-bold text-chick-brown mb-6">접근이 거부되었습니다</h1>
+
+        <div class="bg-red-50 rounded-2xl p-6 mb-8 inline-block">
+            <p class="text-xl font-bold text-red-600">403 Forbidden</p>
+        </div>
+
+        <p class="text-lg mb-8 max-w-xl mx-auto">
+            죄송합니다. 이 페이지에 접근할 권한이 없습니다. 로그인이 필요하거나 접근 권한이 제한된 페이지일 수 있습니다.
+        </p>
+
+        <div class="bg-chick-light rounded-2xl p-6 mb-8 text-left">
+            <h2 class="font-bold text-chick-brown mb-4 flex items-center">
+                <span class="text-xl mr-2">💡</span> 다음을 시도해보세요:
+            </h2>
+            <ul class="space-y-3 text-gray-700">
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>계정에 로그인하여 다시 시도하세요.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>이미 로그인한 경우, 다른 계정으로 로그인해보세요.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>관리자에게 문의하여 접근 권한을 요청하세요.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>브라우저 쿠키와 캐시를 삭제한 후 다시 시도하세요.</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="flex flex-wrap gap-4 justify-center">
+            <a href="index.html"
+                class="bg-chick-brown text-white font-bold py-3 px-8 rounded-xl shadow-md hover:bg-opacity-90 transition transform hover:-translate-y-0.5 active:translate-y-0">
+                홈으로 돌아가기
+            </a>
+            <a href="login.html"
+                class="bg-white text-chick-brown font-bold py-3 px-8 rounded-xl shadow-md border-2 border-chick-brown hover:bg-chick-light transition transform hover:-translate-y-0.5 active:translate-y-0">
+                로그인하기
+            </a>
+            <button onclick="window.history.back()"
+                class="bg-white text-gray-600 font-bold py-3 px-8 rounded-xl shadow-md border-2 border-gray-300 hover:bg-gray-100 transition transform hover:-translate-y-0.5 active:translate-y-0">
+                이전 페이지로
+            </button>
+        </div>
+
+        <div class="mt-10 text-gray-500 text-sm">
+            <p>문제가 계속되면 <a href="#" class="text-chick-brown hover:underline">고객센터</a>로 문의해주세요.</p>
+            <p class="mt-2">오류 코드: 403-FORBIDDEN-CHICK</p>
+        </div>
+    </div>
+</main>
+
+
+{% endblock %}

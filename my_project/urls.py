@@ -23,3 +23,4 @@ urlpatterns = [
     path('zapp/', include('zapp.urls')),
     path('', RedirectView.as_view(url='/zapp/', permanent=False)),
 ]
+handler403 = 'zapp.views.custom_403_view'

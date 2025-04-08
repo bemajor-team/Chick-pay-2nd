@@ -1,6 +1,4 @@
 from django.shortcuts import render ,redirect
-
-
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RegisterSerializer
@@ -12,7 +10,7 @@ from django.views import View
 from django.contrib import messages
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework import status
 from .serializers import MyPageSerializer, PasswordChangeSerializer
 from rest_framework.views import APIView
@@ -34,9 +32,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
-
-
 class MainView(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
         # 메인 페이지로 HTMlaL을 렌더링한다.
         return render(request, 'main.html')
@@ -53,7 +51,6 @@ class RegisterView(APIView):
             return redirect('login')  # 'login'은 urls.py에서 지정한 name 값
         return render(request, 'register.html', {'form': serializer, 'errors': serializer.errors})
 
-
 class LoginView(APIView):
     def get(self, request):
         return render(request, 'login.html', {"form": LoginForm()})
@@ -67,13 +64,11 @@ class LoginView(APIView):
         return render(request, 'login.html', {"form": form, "errors": form.errors})
 
 
-@method_decorator(login_required, name='dispatch')
 class HomeView(APIView):
     def get(self, request):
         return render(request, 'home.html' )
         
 class MyPageView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         user = request.user
@@ -92,9 +87,8 @@ class MyPageView(APIView):
             'balance': cash.balance if cash else 0.00,
         }
         return render(request, 'mypage.html', context)
-
+    
 class PasswordChangeView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         form = PasswordChangeForm(request.data)
@@ -125,7 +119,6 @@ class PasswordChangeView(APIView):
 
 
 class CashDetailView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         cash, created = Cash.objects.get_or_create(user=request.user)
@@ -134,7 +127,6 @@ class CashDetailView(APIView):
 
 
 class CashDepositView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         return render(request, 'deposit.html')
@@ -172,8 +164,6 @@ class CashDepositView(APIView):
 
 
 
-
-
 class DepositCompleteView(View):
     def get(self, request):
         user = request.user
@@ -203,7 +193,6 @@ class DepositCompleteView(View):
 
 
 class CashWithdrawView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         return render(request, 'withdraw.html')
@@ -277,7 +266,6 @@ class WithdrawCompleteView(View):
 
 
 class CashTransferView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         user = request.user
@@ -382,8 +370,8 @@ class TransferCompleteView(View):
         }
 
         return render(request, 'transfer-complete.html', context)
-
-class AllTransactionView(View):
+    
+class AllTransactionView(APIView):
     def get(self, request):
         user = request.user
         cash = getattr(user, 'cash', None)
@@ -407,9 +395,7 @@ class AllTransactionView(View):
         return render(request, 'account.html', context)
     
 
-
-@login_required
-@csrf_exempt
+#OTP 함수
 def otp_setup(request):
     user = request.user
 
@@ -443,3 +429,6 @@ def otp_setup(request):
         'qr_code_url': f'data:image/png;base64,{qr_base64}'
     })
 
+# 403 커스텀 뷰
+def custom_403_view(request, exception=None):
+    return render(request, '403.html', status=403)
