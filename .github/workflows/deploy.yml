@@ -1,0 +1,27 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main # main 브랜치에 push할 때만 실행
+      - sub
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: 13.209.67.123
+          username: ubuntu # EC2 사용자 이름
+          key: ${{ secrets.ZAPP_SECRET}}
+          port: 22
+          script: |
+            cd /home/ubuntu/Chick-pay
+            git pull origin main
+            docker-compose down
+            docker-compose up -d --build
