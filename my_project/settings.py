@@ -12,6 +12,26 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os 
 
 from pathlib import Path
+from opentelemetry import trace
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import (
+    SimpleSpanProcessor,
+    ConsoleSpanExporter,
+)
+
+# 자원 메타 정보 설정
+resource = Resource(attributes={
+    "service.name": "zapp-backend",
+})
+
+# Tracer 프로바이더 설정
+provider = TracerProvider(resource=resource)
+trace.set_tracer_provider(provider)
+
+# Exporter 설정 (여기선 콘솔로 출력)
+span_processor = SimpleSpanProcessor(ConsoleSpanExporter())
+provider.add_span_processor(span_processor)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

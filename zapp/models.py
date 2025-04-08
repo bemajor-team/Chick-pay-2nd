@@ -2,21 +2,6 @@ from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db import models
 from django.conf import settings  # AUTH_USER_MODEL을 사용하기 위해
 
-# class CustomUserManager(BaseUserManager):
-#     def create_user(self, email, password=None, **extra_fields):
-#         if not email:
-#             raise ValueError("이메일은 필수입니다.")
-#         email = self.normalize_email(email)
-#         user = self.model(email=email, **extra_fields)
-#         user.set_password(password)
-#         user.save(using=self._db)
-#         return user
-
-#     def create_superuser(self, email, password, **extra_fields):
-#         extra_fields.setdefault("is_staff", True)
-#         extra_fields.setdefault("is_superuser", True)
-#         return self.create_user(email, password, **extra_fields)
-
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
