@@ -25,6 +25,14 @@ from django.views import View
 from .models import CashTransaction , CustomUser ,CashTransfer  
 from django.core.paginator import Paginator
 from django.db import transaction
+import pyotp
+import qrcode
+import base64
+from io import BytesIO
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 class MainView(APIView):
@@ -54,7 +62,7 @@ class LoginView(APIView):
         if form.is_valid():
             user = form.get_user()
             login(request, user)  # ✅ 세션 로그인 처리
-            return redirect('main')  # 로그인 후 이동할 페이지 이름
+            return redirect('otp-setup')  # 로그인 후 이동할 페이지 이름
         return render(request, 'login.html', {"form": form, "errors": form.errors})
 
 
@@ -396,3 +404,41 @@ class AllTransactionView(View):
         }
 
         return render(request, 'account.html', context)
+    
+
+
+@login_required
+@csrf_exempt
+def otp_setup(request):
+    user = request.user
+
+    if not user.otp_secret:
+        user.otp_secret = pyotp.random_base32()
+        user.save()
+
+    totp = pyotp.TOTP(user.otp_secret)
+    otp_uri = totp.provisioning_uri(name=user.email, issuer_name="CHICKPAY")
+
+    # QR코드 생성
+    qr = qrcode.make(otp_uri)
+    buffer = BytesIO()
+    qr.save(buffer, format='PNG')
+    qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+    if request.method == 'POST':
+        otp_code = request.POST.get('otp_code')
+        if totp.verify(otp_code):
+            # 여기서 사용자 OTP 인증 완료 처리
+            return redirect('main')  # 성공시 이동
+        else:
+            return render(request, 'otp_setup.html', {
+                'otp_secret': user.otp_secret,
+                'qr_code_url': f'data:image/png;base64,{qr_base64}',
+                'error': 'OTP 인증 실패!'
+            })
+
+    return render(request, 'otp_setup.html', {
+        'otp_secret': user.otp_secret,
+        'qr_code_url': f'data:image/png;base64,{qr_base64}'
+    })
+
