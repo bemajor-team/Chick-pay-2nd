@@ -56,6 +56,7 @@ class LoginView(APIView):
         return render(request, 'login.html', {"form": form, "errors": form.errors})
 
 class MyPageView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         user = request.user
         cash = getattr(user, 'cash', None)
@@ -75,6 +76,7 @@ class MyPageView(APIView):
         return render(request, 'mypage.html', context)
     
 class PasswordChangeView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         form = PasswordChangeForm(request.data)
         
@@ -104,6 +106,7 @@ class PasswordChangeView(APIView):
 
 
 class CashDetailView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         cash, created = Cash.objects.get_or_create(user=request.user)
@@ -112,6 +115,7 @@ class CashDetailView(APIView):
 
 
 class CashDepositView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         return render(request, 'deposit.html')
@@ -150,6 +154,8 @@ class CashDepositView(APIView):
 
 
 class DepositCompleteView(View):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         user = request.user
         
@@ -178,6 +184,7 @@ class DepositCompleteView(View):
 
 
 class CashWithdrawView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         return render(request, 'withdraw.html')
@@ -221,6 +228,7 @@ class CashWithdrawView(APIView):
 
 
 class WithdrawCompleteView(View):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
         
@@ -251,6 +259,7 @@ class WithdrawCompleteView(View):
 
 
 class CashTransferView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         user = request.user
@@ -339,6 +348,7 @@ class CashTransferView(APIView):
 
 
 class TransferCompleteView(View):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
 
@@ -357,6 +367,7 @@ class TransferCompleteView(View):
         return render(request, 'transfer-complete.html', context)
     
 class AllTransactionView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
         cash = getattr(user, 'cash', None)

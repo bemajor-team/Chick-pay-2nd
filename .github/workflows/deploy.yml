@@ -53,6 +53,8 @@ jobs:
             echo "📦 이동해서 코드 갱신"
             cd /home/ubuntu/Chick-pay
             git pull origin sub
+            docker-compose down --remove-orphans || true
+            docker system prune -af || true
 
             echo "🛠️ Docker Compose 재빌드 (다운 없이)"
             docker-compose up -d --build
