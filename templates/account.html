@@ -5,6 +5,11 @@
 {% load humanize %}
 <main class="container mx-auto px-4 py-10 flex-grow">
   <div class="max-w-4xl mx-auto">
+    <!-- <div class="flex items-center mb-8">
+      <a href="{% url 'account' %}" class="text-chick-brown hover:underline flex items-center">
+        <span class="mr-2">←</span> 계좌 목록으로 돌아가기
+      </a>
+    </div> -->
 
     <div class="bg-gradient-to-r from-chick-yellow to-chick-orange rounded-2xl p-6 text-chick-brown shadow-md mb-8">
       <div class="flex justify-between items-center mb-4">
@@ -70,8 +75,8 @@
 
           {% for num in page_obj.paginator.page_range %}
           <a href="?page={{ num }}"
-            class="w-8 h-8 flex items-center justify-center rounded-full {% if page_obj.number == num %}bg-chick-yellow text-chick-brown font-bold{% else %}border hover:bg-gray-100{% endif %}">{{
-            num }}</a>
+            class="w-8 h-8 flex items-center justify-center rounded-full {% if page_obj.number == num %}bg-chick-yellow text-chick-brown font-bold{% else %}border hover:bg-gray-100{% endif %}">
+            {{num }}</a>
           {% endfor %}
 
           {% if page_obj.has_next %}
