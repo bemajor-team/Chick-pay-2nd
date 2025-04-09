@@ -97,11 +97,11 @@
         </div>
 
         <div class="flex flex-wrap gap-4 justify-center">
-            <a href="index.html"
+            <a href="{% url 'main' %}"
                 class="bg-chick-brown text-white font-bold py-3 px-8 rounded-xl shadow-md hover:bg-opacity-90 transition transform hover:-translate-y-0.5 active:translate-y-0">
                 홈으로 돌아가기
             </a>
-            <a href="login.html"
+            <a href="{% url 'login' %}"
                 class="bg-white text-chick-brown font-bold py-3 px-8 rounded-xl shadow-md border-2 border-chick-brown hover:bg-chick-light transition transform hover:-translate-y-0.5 active:translate-y-0">
                 로그인하기
             </a>
