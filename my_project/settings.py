@@ -174,3 +174,8 @@ REST_FRAMEWORK = {
     # ),
 
 STATIC_URL = '/static/'
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://chick-pay.com',
+    'https://www.chick-pay.com',
+]

@@ -3,6 +3,10 @@ from django.contrib.auth import login
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.views import View
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+
+
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
