@@ -164,9 +164,6 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_CHARSET': 'utf-8',
 
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
 }
 
     # 'DEFAULT_AUTHENTICATION_CLASSES': (

@@ -6,7 +6,7 @@ from django.views import View
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework import status 
 
 from .forms import LoginForm, PasswordChangeForm
@@ -27,15 +27,11 @@ import base64
 from io import BytesIO
 
 class MainView(APIView):
-    permission_classes = [AllowAny]
-
     def get(self, request):
         # 메인 페이지로 HTMlaL을 렌더링한다.
         return render(request, 'main.html')
 
 class RegisterView(APIView):
-    permission_classes = [AllowAny]
-
     def get(self, request):
         return render(request, 'register.html')
 
@@ -48,8 +44,6 @@ class RegisterView(APIView):
         return render(request, 'register.html', {'form': serializer, 'errors': serializer.errors})
 
 class LoginView(APIView):
-    permission_classes = [AllowAny]
-
     def get(self, request):
         return render(request, 'login.html', {"form": LoginForm()})
 
@@ -61,13 +55,7 @@ class LoginView(APIView):
             return redirect('otp-setup')  # 로그인 후 이동할 페이지 이름
         return render(request, 'login.html', {"form": form, "errors": form.errors})
 
-
-class HomeView(APIView):
-    def get(self, request):
-        return render(request, 'home.html' )
-        
 class MyPageView(APIView):
-
     def get(self, request, *args, **kwargs):
         user = request.user
         cash = getattr(user, 'cash', None)
@@ -87,7 +75,6 @@ class MyPageView(APIView):
         return render(request, 'mypage.html', context)
     
 class PasswordChangeView(APIView):
-
     def post(self, request):
         form = PasswordChangeForm(request.data)
         
