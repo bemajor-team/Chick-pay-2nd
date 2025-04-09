@@ -1,36 +1,30 @@
-from django.shortcuts import render ,redirect
-from rest_framework.response import Response
-from rest_framework import status
-from .serializers import RegisterSerializer
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-from .forms import LoginForm
-from django.views import View
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
 from django.contrib import messages
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated,AllowAny
-from rest_framework import status
-from .serializers import MyPageSerializer, PasswordChangeSerializer
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from .models import Cash
-from .serializers import CashSerializer, CashTransactionSerializer , TransferSerializer
-from .forms import PasswordChangeForm 
-from django.views import View
-from .models import CashTransaction , CustomUser ,CashTransfer  
 from django.core.paginator import Paginator
+from django.views import View
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework import status 
+
+from .forms import LoginForm, PasswordChangeForm
+from .models import Cash, CashTransaction, CustomUser, CashTransfer
+from .serializers import (
+    RegisterSerializer,
+    MyPageSerializer,
+    CashSerializer,
+    CashTransactionSerializer,
+    TransferSerializer,
+)
+
 from django.db import transaction
+
 import pyotp
 import qrcode
 import base64
 from io import BytesIO
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
 
 class MainView(APIView):
     permission_classes = [AllowAny]
@@ -40,6 +34,8 @@ class MainView(APIView):
         return render(request, 'main.html')
 
 class RegisterView(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
         return render(request, 'register.html')
 
@@ -52,6 +48,8 @@ class RegisterView(APIView):
         return render(request, 'register.html', {'form': serializer, 'errors': serializer.errors})
 
 class LoginView(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
         return render(request, 'login.html', {"form": LoginForm()})
 

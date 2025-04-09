@@ -23,25 +23,6 @@
             },
         };
     </script>
-    <!-- <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        "chick-yellow": "#FFDE59",
-                        "chick-orange": "#FFC93C",
-                        "chick-brown": "#B85C38",
-                        "chick-light": "#FFF9E5",
-                    },
-                },
-            },
-            safelist: [
-                'bg-chick-yellow', 'bg-chick-orange', 'bg-chick-brown', 'bg-chick-light',
-                'text-chick-yellow', 'text-chick-orange', 'text-chick-brown', 'text-chick-light',
-                'border-chick-yellow', 'border-chick-orange', 'border-chick-brown', 'border-chick-light'
-            ]
-        };
-    </script> -->
 
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap");
@@ -78,7 +59,7 @@
                     <div class="text-4xl">🐥</div>
                     <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
                 </a>
-                
+
                 <nav class="hidden md:flex items-center gap-6">
                     <a href="{% url 'account' %}" class="text-chick-brown font-medium hover:underline">계좌조회</a>
                     <a href="{% url 'cash-transfer' %}" class="text-chick-brown font-medium hover:underline">송금하기</a>
@@ -87,13 +68,13 @@
                     <a href="{% url 'mypage' %}" class="text-chick-brown font-medium hover:underline">마이페이지</a>
                     {% if user.is_authenticated %}
                     <form method="post" action="{% url 'logout' %}" class="inline flex items-center m-0">
-                      {% csrf_token %}
-                      <button type="submit" class="text-chick-brown font-medium hover:underline">
-                          로그아웃
-                      </button>
+                        {% csrf_token %}
+                        <button type="submit" class="text-chick-brown font-medium hover:underline">
+                            로그아웃
+                        </button>
                     </form>
                     {% endif %}
-          
+
 
                 </nav>
                 <button class="md:hidden text-2xl">☰</button>
