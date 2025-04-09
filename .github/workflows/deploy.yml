@@ -1,27 +1,60 @@
+# name: Deploy to EC2
+
+# on:
+#   push:
+#     branches:
+#       - main # main 브랜치에 push할 때만 실행
+#       - sub
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Deploy via SSH
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: 13.209.67.123
+#           username: ubuntu # EC2 사용자 이름
+#           key: ${{ secrets.ZAPP_SECRET}}
+#           port: 22
+#           script: |
+#             cd /home/ubuntu/Chick-pay
+#             git pull origin sub
+#             docker-compose down
+#             docker-compose up -d --build
+
 name: Deploy to EC2
 
 on:
   push:
     branches:
-      - main # main 브랜치에 push할 때만 실행
+      - main
       - sub
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: ✅ Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy via SSH
+      - name: 🚀 Deploy via SSH to EC2 with Docker
         uses: appleboy/ssh-action@master
         with:
-          host: 13.209.67.123
-          username: ubuntu # EC2 사용자 이름
-          key: ${{ secrets.ZAPP_SECRET}}
+          host: 13.124.27.58
+          username: ubuntu
+          key: ${{ secrets.ZAPP_SECRET }}
           port: 22
           script: |
+            echo "📦 이동해서 코드 갱신"
             cd /home/ubuntu/Chick-pay
             git pull origin sub
-            docker-compose down
+
+            echo "🛠️ Docker Compose 재빌드 (다운 없이)"
             docker-compose up -d --build
+
+            echo "✅ 서비스 재시작 완료!"
