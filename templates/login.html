@@ -2,6 +2,7 @@
 {% block title %}Chick Pay - 로그인{% endblock %}
 
 {% block content %}
+{% load static %}
 <div class=" bg-white rounded-3xl shadow-lg p-8 max-w-md w-full border-3 border-chick-yellow">
     <h2 class="text-2xl font-bold text-chick-brown mb-6 text-center">로그인</h2>
 
@@ -19,17 +20,17 @@
                 class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
         </div>
 
-        <div class="flex items-center justify-between mb-5">
-            <div class="flex items-center">
-                <input type="checkbox" id="remember" class="mr-2">
-                <label for="remember" class="text-sm text-gray-600">로그인 상태 유지</label>
-            </div>
-            <a href="#" class="text-sm text-chick-brown hover:underline">비밀번호를 잊으셨나요?</a>
-        </div>
+        <!-- <div class="flex items-center justify-between mb-5"> -->
+        <!-- <div class="flex items-center"> -->
+        <!-- <input type="checkbox" id="remember" class="mr-2"> -->
+        <!-- <label for="remember" class="text-sm text-gray-600">로그인 상태 유지</label> -->
+        <!-- </div> -->
+        <!-- <a href="#" class="text-sm text-chick-brown hover:underline">비밀번호를 잊으셨나요?</a> -->
+        <!-- </div> -->
 
         <button type="submit"
             class="w-full bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0">
-            로그인 🐥
+            로그인 <img src="{% static 'images/image.png' %}" alt="Chick Pay" class="w-5 h-5 ml-1 inline">
         </button>
 
     </form>

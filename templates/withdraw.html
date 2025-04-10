@@ -2,6 +2,7 @@
 {% block title %}Chick Pay - 출금하기{% endblock %}
 
 {% block content %}
+{% load static %}
 
 <main class="container mx-auto px-4 py-10 flex-grow">
   <div class="max-w-2xl mx-auto">
@@ -29,7 +30,8 @@
 
         <button type="submit"
           class="w-full bg-chick-yellow text-chick-brown font-bold py-4 px-6 rounded-xl shadow-md hover:bg-chick-orange transition transform hover:-translate-y-0.5 active:translate-y-0">
-          출금하기 🐥
+          출금하기
+          <img src="{% static 'images/image.png' %}" alt="Chick Pay" class="inline w-5 h-5">
         </button>
       </form>
     </div>

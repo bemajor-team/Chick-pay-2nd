@@ -1,3 +1,5 @@
+{% load static %}
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,6 +61,8 @@
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between">
         <a href="" class="flex items-center gap-3">
+
+
           <div class="text-4xl">🐥</div>
           <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
           {% if user.is_authenticated %}
@@ -86,7 +90,9 @@
     </div>
   </header>
 
-  <section class="bg-gradient-to-b from-chick-yellow to-chick-light py-16">
+
+
+  <section class=" bg-gradient-to-b from-chick-yellow to-chick-light py-16">
     <div class="container mx-auto px-4">
       <div class="flex flex-col md:flex-row items-center justify-between gap-10">
         <div class="md:w-1/2">
@@ -117,7 +123,8 @@
         <div class="md:w-1/2 flex justify-center">
           <div class="relative">
             <div class="w-64 h-64 md:w-80 md:h-80 bg-white rounded-full shadow-xl flex items-center justify-center">
-              <div class="text-9xl animate-float">🐥</div>
+              <img src="{% static 'images/image.png' %}" alt="Chick Pay" class="w-30 h-30 animate-float">
+              <!-- <div class="text-9xl animate-float">🐥</div> -->
             </div>
             <div
               class="absolute -top-5 -right-5 bg-chick-orange text-chick-brown text-sm font-bold py-2 px-4 rounded-full shadow-md transform rotate-12">

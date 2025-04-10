@@ -1,3 +1,5 @@
+{% load static %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,6 +57,28 @@
 
 <body class="bg-chick-light text-gray-800 leading-relaxed min-h-screen flex flex-col">
 
+    <header class="bg-chick-yellow py-5 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <a href="" class="flex items-center gap-3">
+                    <div class="text-4xl">🐥</div>
+                    <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
+                </a>
+                <nav class="hidden md:flex items-center gap-6">
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" class="inline flex items-center m-0">
+                        {% csrf_token %}
+                        <!-- <button type="submit" class="text-chick-brown font-medium hover:underline">
+                            로그아웃
+                        </button> -->
+                    </form>
+                    {% endif %}
+
+                </nav>
+                <button class="md:hidden text-2xl">☰</button>
+            </div>
+        </div>
+    </header>
 
 
 
@@ -108,7 +132,11 @@
             </div>
 
             <div class="text-center">
-                <p>&copy; 2025 Chick Pay. 모든 권리 보유. 🐥</p>
+                <p>&copy; 2025 Chick Pay. 모든 권리 보유.
+                    <a href="{% url 'main' %}">
+                        <img src="{% static 'images/image.png' %}" alt="Chick Pay" class="inline w-5 h-5">
+                    </a>
+                </p>
             </div>
         </div>
     </footer>
