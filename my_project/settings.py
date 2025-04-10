@@ -44,7 +44,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-_k1lu*hx@02_hqr!+v+r=z^!sh(wk(nzj#kb5!8up!3+5&_f6&"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -176,6 +175,8 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': (
     #     'rest_framework.permissions.IsAuthenticated',  # 옵션: 인증된 사용자만 허용
     # ),
+
+DEBUG = False
 
 STATIC_URL = '/static/'
 
