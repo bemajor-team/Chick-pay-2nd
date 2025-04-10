@@ -1,4 +1,6 @@
 <!-- templates/base.html -->
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -49,7 +51,6 @@
     </style>
 
 </head>
-{% load static %}
 
 <body class="bg-chick-light text-gray-800 leading-relaxed min-h-screen flex flex-col">
     <!-- 공유할 헤더 내용 -->
@@ -57,7 +58,6 @@
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between">
                 <a href="{% url 'main' %}" class="flex items-center gap-3">
-                    <!-- <div class="text-4xl">🐥</div>              -->
                     <img src="{% static 'images/image.png' %}" alt="Chick Pay" class="w-10 h-10">
 
                     <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
@@ -95,7 +95,6 @@
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center mb-8">
                 <div class="flex items-center gap-3 mb-6 md:mb-0">
-                    <!-- <div class="text-4xl">🐥</div> -->
                     <img src="{% static 'images/image.png' %}" class="w-11 h-11">
                     <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
                 </div>
