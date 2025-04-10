@@ -10,3 +10,18 @@ services:
 
     ports:
       - "8000:8000"
+
+nginx:
+  image: nginx:latest # 최신 Nginx 이미지 사용
+  container_name: nginx
+  ports:
+    - "80:80" # HTTP 요청을 80 포트로 받음
+  volumes:
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf # Nginx 설정 파일
+    - ./static:/app/staticfiles # Static 파일
+  networks:
+    - backend
+
+networks:
+  backend:
+    driver: bridge
