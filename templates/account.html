@@ -73,20 +73,26 @@
             class="w-8 h-8 flex items-center justify-center rounded-full border hover:bg-gray-100">&lt;</a>
           {% endif %}
 
+          {# 페이지 범위 설정 #}
           {% for num in page_obj.paginator.page_range %}
-          <a href="?page={{ num }}"
+          {% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %} <a href="?page={{ num }}"
             class="w-8 h-8 flex items-center justify-center rounded-full {% if page_obj.number == num %}bg-chick-yellow text-chick-brown font-bold{% else %}border hover:bg-gray-100{% endif %}">
-            {{num }}</a>
-          {% endfor %}
+            {{ num }}
+            </a>
+            {% endif %}
+            {% endfor %}
 
-          {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}"
-            class="w-8 h-8 flex items-center justify-center rounded-full border hover:bg-gray-100">&gt;</a>
-          {% endif %}
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}"
+              class="w-8 h-8 flex items-center justify-center rounded-full border hover:bg-gray-100">&gt;</a>
+            {% endif %}
         </div>
       </div>
       {% endif %}
     </div>
+  </div>
+  {% endif %}
+  </div>
   </div>
 </main>
 {% endblock %}
