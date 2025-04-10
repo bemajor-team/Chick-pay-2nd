@@ -177,7 +177,6 @@ REST_FRAMEWORK = {
 
 }
 
-
 CSRF_TRUSTED_ORIGINS = [
     'https://chick-pay.com',
     'https://www.chick-pay.com',
@@ -188,6 +187,6 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
-SESSION_COOKIE_AGE = 600
+SESSION_COOKIE_AGE = 10000000
 
 SESSION_SAVE_EVERY_REQUEST = True
