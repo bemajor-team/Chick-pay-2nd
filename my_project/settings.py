@@ -8,6 +8,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
+
+
 """
 import os 
 
@@ -64,6 +66,8 @@ INSTALLED_APPS = [
     "zapp",
     'drf_spectacular',
     'drf_spectacular_sidecar',
+    #aws s3
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -149,12 +153,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "/static/"
+STATIC_URL = "https://d13g1etgrsjc85.cloudfront.net/"
 
+#로컬에서도 개발하고 싶으면
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static')
 ]
 
 # Default primary key field type
@@ -187,6 +192,35 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
+
+#세션 설정
 SESSION_COOKIE_AGE = 10000000
 
 SESSION_SAVE_EVERY_REQUEST = True
+
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+	}
+}
+
+# AWS_S3_CUSTOM_DOMAIN = 'https://d13g1etgrsjc85.cloudfront.net'  # CloudFront 도메인
+
+# AWS 인증 정보 (환경변수로도 설정 가능)
+AWS_ACCESS_KEY_ID = 'AKIAUKMRZ6CW3ZOHUAM5'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'myzappbucket'
+AWS_S3_REGION_NAME = 'ap-northeast-2'  # 서울 리전
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+
+# S3의 URL 설정
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+
+# 정적파일 저장 위치 설정
+STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
