@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.core.exceptions import PermissionDenied
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+
+
 
 
 
@@ -398,6 +401,14 @@ class AllTransactionView(APIView):
 #OTP 함수
 def otp_setup(request):
     user = request.user
+
+    if not user.is_authenticated:
+        raise PermissionDenied  # 로그인 안 했으면 403 Forbidden
+
+
+    if not hasattr(user, 'otp_secret') or not user.otp_secret:
+        user.otp_secret = pyotp.random_base32()
+        user.save()
 
     if not user.otp_secret:
         user.otp_secret = pyotp.random_base32()

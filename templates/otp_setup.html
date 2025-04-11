@@ -1,28 +1,152 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="bg-white shadow-md rounded-lg p-8 max-w-xl mx-auto w-full animate-float">
-    <h2 class="text-3xl font-bold text-chick-brown mb-4 text-center">Google OTP 설정</h2>
-    <p class="text-gray-700 mb-6 text-center">아래 QR 코드를 스캔해서 Google Authenticator에 등록하세요.</p>
+{% load static %}
 
-    <div class="flex justify-center mb-4">
-        <img src="{{ qr_code_url }}" alt="QR Code" class="w-56 h-56 border border-chick-yellow shadow-md rounded-lg">
-    </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Chick pay{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <p class="text-gray-700 text-center mb-6">또는 Secret Key: <b class="text-chick-orange">{{ otp_secret }}</b></p>
 
-    {# ✅ 실패 시 에러 메시지 출력 추가 #}
-    {% if error %}
-    <p class="text-red-600 text-center font-semibold">{{ error }}</p>
-    {% endif %}
+    <!-- 공통 CSS, 스크립트 등 -->
 
-    <form method="post" class="flex flex-col gap-4">
-        {% csrf_token %}
-        <input type="text" name="otp_code" placeholder="OTP 코드 입력"
-            class="border border-chick-yellow rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-chick-orange transition">
-        <button type="submit"
-            class="bg-chick-yellow text-chick-brown font-bold py-3 px-5 rounded-lg hover:bg-chick-orange transition">
-            확인
-        </button>
-    </form>
-</div>
-{% endblock %}
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "chick-yellow": "#FFDE59",
+                        "chick-orange": "#FFC93C",
+                        "chick-brown": "#B85C38",
+                        "chick-light": "#FFF9E5",
+                    },
+                },
+            },
+            safelist: [
+                'bg-chick-yellow', 'bg-chick-orange', 'bg-chick-brown', 'bg-chick-light',
+                'text-chick-yellow', 'text-chick-orange', 'text-chick-brown', 'text-chick-light',
+                'border-chick-yellow', 'border-chick-orange', 'border-chick-brown', 'border-chick-light'
+            ]
+        };
+    </script>
+
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap");
+
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+
+</head>
+
+<body class="bg-chick-light text-gray-800 leading-relaxed min-h-screen flex flex-col">
+
+    <header class="bg-chick-yellow py-5 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <a href="" class="flex items-center gap-3">
+                    <div class="text-4xl"><img src="{% static 'images/image.png' %}" alt="Chick Pay"
+                            class="w-[40px] h-auto"></div>
+
+                    <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
+                </a>
+                <nav class="hidden md:flex items-center gap-6">
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" class="inline flex items-center m-0">
+                        {% csrf_token %}
+                        <!-- <button type="submit" class="text-chick-brown font-medium hover:underline">
+                            로그아웃
+                        </button> -->
+                    </form>
+                    {% endif %}
+
+                </nav>
+                <button class="md:hidden text-2xl">☰</button>
+            </div>
+        </div>
+    </header>
+
+
+
+    <section class="py-16 bg-chick-light flex-grow">
+        <div class="bg-white shadow-md rounded-lg p-8 max-w-xl mx-auto w-full animate-float">
+            <h2 class="text-3xl font-bold text-chick-brown mb-4 text-center">Google OTP 설정</h2>
+            <p class="text-gray-700 mb-6 text-center">아래 QR 코드를 스캔해서 Google Authenticator에 등록하세요.</p>
+
+            <div class="flex justify-center mb-4">
+                <img src="{{ qr_code_url }}" alt="QR Code"
+                    class="w-56 h-56 border border-chick-yellow shadow-md rounded-lg">
+            </div>
+
+            <p class="text-gray-700 text-center mb-6">또는 Secret Key: <b class="text-chick-orange">{{ otp_secret }}</b>
+            </p>
+
+            {# ✅ 실패 시 에러 메시지 출력 추가 #}
+            {% if error %}
+            <p class="text-red-600 text-center font-semibold">{{ error }}</p>
+            {% endif %}
+
+            <form method="post" class="flex flex-col gap-4">
+                {% csrf_token %}
+                <input type="text" name="otp_code" placeholder="OTP 코드 입력"
+                    class="border border-chick-yellow rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-chick-orange transition">
+                <button type="submit"
+                    class="bg-chick-yellow text-chick-brown font-bold py-3 px-5 rounded-lg hover:bg-chick-orange transition">
+                    확인
+                </button>
+            </form>
+        </div>
+
+    </section>
+
+
+    <footer class="bg-chick-yellow py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                <div class="flex items-center gap-3 mb-6 md:mb-0">
+                    <div class="text-4xl">
+                        <img src="{% static 'images/image.png' %}" alt="Chick Pay" class="w-[40px] h-auto">
+                    </div>
+                    <h1 class="text-2xl font-bold text-chick-brown">Chick Pay</h1>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="#" class="text-chick-brown hover:underline">서비스 소개</a>
+                    <a href="#" class="text-chick-brown hover:underline">이용약관</a>
+                    <a href="#" class="text-chick-brown hover:underline">개인정보처리방침</a>
+                    <a href="#" class="text-chick-brown hover:underline">고객센터</a>
+                    <a href="#" class="text-chick-brown hover:underline">채용정보</a>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <p>&copy; 2025 Chick Pay. 모든 권리 보유.
+                    <a href="{% url 'main' %}">
+                        <img src="{% static 'images/image.png' %}" alt="Chick Pay" class="inline w-5 h-5">
+                    </a>
+                </p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+
+
+
+</html>

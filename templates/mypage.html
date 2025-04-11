@@ -4,6 +4,7 @@
 {% block content %}
 
 {% load humanize %}
+{% load static %}
 <main class="container mx-auto px-4 py-10 flex-grow">
     <div class="max-w-4xl mx-auto">
         <h2 class="text-3xl font-bold text-chick-brown mb-8 text-center">마이페이지</h2>
@@ -11,8 +12,11 @@
         <div class="bg-white rounded-3xl shadow-lg p-8 mb-8 border-3 border-chick-yellow">
             <div class="flex flex-col md:flex-row items-center gap-6 mb-6">
                 <div class="w-32 h-32 bg-chick-yellow rounded-full flex items-center justify-center text-6xl">
-                    🐥
+                    <img src="{% static 'images/image.png' %}" class="w-16 h-16">
+
                 </div>
+
+
                 <div>
                     <h3 class="text-2xl font-bold text-chick-brown">{{name}}</h3>
                     <p class="text-gray-600">{{email}}</p>
