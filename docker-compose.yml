@@ -6,21 +6,18 @@ services:
     command: gunicorn --workers 3 --bind 0.0.0.0:8000 my_project.wsgi:application
     volumes:
       - .:/app
-      - ./staticfiles:/app/staticfiles
     ports:
       - "8000:8000"
 
-  nginx:
-    image: nginx:latest # 최신 Nginx 이미지 사용
-    container_name: nginx
-    ports:
-      - "80:80" # HTTP 요청을 80 포트로 받음
-    volumes:
-      - /etc/nginx:/etc/nginx # 호스트의 nginx.conf 파일을 컨테이너로 마운트
-      - ./static:/app/staticfiles # Static 파일
-    networks:
-      - backend
-
 networks:
-  backend:
-    driver: bridge
+  - backend
+# nginx:
+#   #   image: nginx:latest # 최신 Nginx 이미지 사용
+#   #   container_name: nginx
+#   #   ports:
+#   #     - "80:80" # HTTP 요청을 80 포트로 받음
+#   #   volumes:
+#   #     - /etc/nginx:/etc/nginx # 호스트의 nginx.conf 파일을 컨테이너로 마운트
+#   #     - ./static:/app/staticfiles # Static 파일
+#   #   networks:
+#   #     - backend
