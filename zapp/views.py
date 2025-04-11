@@ -6,15 +6,15 @@ from django.core.exceptions import PermissionDenied
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-
-
-
-
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status 
+from rest_framework.decorators import api_view
+from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
+from django.shortcuts import render
+
 
 from .forms import LoginForm, PasswordChangeForm
 from .models import Cash, CashTransaction, CustomUser, CashTransfer
@@ -111,7 +111,6 @@ class PasswordChangeView(APIView):
         })
 
 
-
 class CashDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -160,7 +159,7 @@ class CashDepositView(APIView):
 
 
 
-class DepositCompleteView(View):
+class DepositCompleteView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -234,7 +233,7 @@ class CashWithdrawView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class WithdrawCompleteView(View):
+class WithdrawCompleteView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
@@ -354,7 +353,7 @@ class CashTransferView(APIView):
 
 
 
-class TransferCompleteView(View):
+class TransferCompleteView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
@@ -398,26 +397,21 @@ class AllTransactionView(APIView):
         return render(request, 'account.html', context)
     
 
-#OTP 함수
+
+# ✅ 실제 동작용 View (웹 페이지 렌더링)
 def otp_setup(request):
     user = request.user
 
     if not user.is_authenticated:
-        raise PermissionDenied  # 로그인 안 했으면 403 Forbidden
-
+        raise PermissionDenied
 
     if not hasattr(user, 'otp_secret') or not user.otp_secret:
-        user.otp_secret = pyotp.random_base32()
-        user.save()
-
-    if not user.otp_secret:
         user.otp_secret = pyotp.random_base32()
         user.save()
 
     totp = pyotp.TOTP(user.otp_secret)
     otp_uri = totp.provisioning_uri(name=user.email, issuer_name="CHICKPAY")
 
-    # QR코드 생성
     qr = qrcode.make(otp_uri)
     buffer = BytesIO()
     qr.save(buffer, format='PNG')
@@ -426,8 +420,7 @@ def otp_setup(request):
     if request.method == 'POST':
         otp_code = request.POST.get('otp_code')
         if totp.verify(otp_code):
-            # 여기서 사용자 OTP 인증 완료 처리
-            return redirect('main')  # 성공시 이동
+            return redirect('main')
         else:
             return render(request, 'otp_setup.html', {
                 'otp_secret': user.otp_secret,
@@ -440,6 +433,6 @@ def otp_setup(request):
         'qr_code_url': f'data:image/png;base64,{qr_base64}'
     })
 
-# 403 커스텀 뷰
 def custom_403_view(request, exception=None):
     return render(request, '403.html', status=403)
+

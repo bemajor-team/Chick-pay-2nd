@@ -38,3 +38,5 @@ urlpatterns = [
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 handler403 = 'zapp.views.custom_403_view'
+
+

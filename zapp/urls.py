@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import *
 from django.contrib.auth.views import LogoutView
+from . import views
 
 urlpatterns = [
     path('', MainView.as_view(), name='main'),
@@ -18,5 +19,5 @@ urlpatterns = [
     path('cash/transfer/', CashTransferView.as_view(), name='cash-transfer'),
     path('cash/transfer/complete', TransferCompleteView.as_view(), name='transfer-complete'),
     path('account/', AllTransactionView.as_view(), name='account'),
-    path('otp/setup/', otp_setup, name='otp-setup'),
+    path('otp/setup/', otp_setup, name='otp-setup')
 ]
