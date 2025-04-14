@@ -2,7 +2,8 @@ from locust import HttpUser, task, between
 # from bs4 import BeautifulSoup
 
 class ChickPayUser(HttpUser):
-    host = "https://chick-pay.com"  # 대상 도메인
+    host = "https://chick-pay.com"
+    wait_time = between(1, 2)   # 대상 도메인
 
     @task
     def main_page(self):
