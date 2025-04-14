@@ -106,6 +106,7 @@ WSGI_APPLICATION = "my_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / '.env')
 
 DATABASES = {
     'default': {
@@ -229,5 +230,5 @@ MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 # boto3 정적파일 저장 위치 설정
 # STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
-load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / '.env')
+
 
