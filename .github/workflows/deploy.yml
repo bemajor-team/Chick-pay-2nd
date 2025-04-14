@@ -20,13 +20,14 @@ jobs:
           host: 43.202.96.168
           username: ubuntu
           key: ${{ secrets.ZAPP_SECRET }}
+          envs: ENV_FILE
           port: 22
           script: |
             echo "📦 이동해서 코드 갱신"
             cd /home/ubuntu/Chick-pay
 
             echo "🔐 .env 복원 시작 (base64 decode)"
-            echo '${{ secrets.ENV_FILE }}' | base64 -d > .env
+            echo "$ENV_FILE" | base64 -d > .env
 
             echo "🔄 Git pull"
             git pull origin sub
