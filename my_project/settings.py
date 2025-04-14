@@ -21,6 +21,8 @@ from opentelemetry.sdk.trace.export import (
     SimpleSpanProcessor,
     ConsoleSpanExporter,
 )
+from dotenv import load_dotenv
+from pathlib import Path
 
 # 자원 메타 정보 설정
 resource = Resource(attributes={
@@ -108,11 +110,11 @@ WSGI_APPLICATION = "my_project.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'bemajor',
-        'PASSWORD': 'bemajor123!!',
-        'HOST': 'database-1-instance-1.cn68okq6sw53.ap-northeast-2.rds.amazonaws.com',
-        'PORT': '5432',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 
@@ -208,19 +210,24 @@ STORAGES = {
 	}
 }
 
-# AWS_S3_CUSTOM_DOMAIN = 'https://d13g1etgrsjc85.cloudfront.net'  # CloudFront 도메인
 
+# AWS 설정
 # AWS 인증 정보 (환경변수로도 설정 가능)
-AWS_ACCESS_KEY_ID = 'AKIAUKMRZ6CW3ZOHUAM5'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'myzappbucket'
-AWS_S3_REGION_NAME = 'ap-northeast-2'  # 서울 리전
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
 AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
 
 # S3의 URL 설정
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
 STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 
-# 정적파일 저장 위치 설정
-STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# boto3 정적파일 저장 위치 설정
+# STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / '.env')
+
