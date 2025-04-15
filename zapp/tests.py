@@ -292,6 +292,10 @@
 
 # tests/test_integration.py
 
+
+
+# pytest 통합테스트!
+
 import pytest
 from decimal import Decimal
 from django.urls import reverse

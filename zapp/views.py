@@ -272,8 +272,6 @@ class WithdrawCompleteView(APIView):
         }
 
         return render(request, 'withdraw-complete.html', context)
-
-
 class CashTransferView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -360,7 +358,6 @@ class CashTransferView(APIView):
             print(f"송금 처리 중 오류 발생: {str(e)}")  # 디버깅용
             messages.error(request, "송금 처리 중 오류가 발생했습니다.")
             return redirect('transfer')
-
 
 
 class TransferCompleteView(APIView):
