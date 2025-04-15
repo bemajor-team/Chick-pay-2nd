@@ -42,13 +42,23 @@ class RegisterView(APIView):
     def get(self, request):
         return render(request, 'register.html')
 
+
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            # 회원가입 성공 시 로그인 페이지로 리다이렉트
-            return redirect('login')  # 'login'은 urls.py에서 지정한 name 값
+            user = serializer.save()
+            # 회원가입 시 Cash 객체 생성
+            Cash.objects.create(user=user, balance=0)
+            return redirect('login')
         return render(request, 'register.html', {'form': serializer, 'errors': serializer.errors})
+
+    # def post(self, request):
+    #     serializer = RegisterSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         # 회원가입 성공 시 로그인 페이지로 리다이렉트
+    #         return redirect('login')  # 'login'은 urls.py에서 지정한 name 값
+    #     return render(request, 'register.html', {'form': serializer, 'errors': serializer.errors})
 
 class LoginView(APIView):
     def get(self, request):
