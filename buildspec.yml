@@ -1,0 +1,14 @@
+# buildspec.yml
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.10
+    commands:
+      - pip install semgrep
+
+  build:
+    commands:
+      - echo "🔍 Run Semgrep with OWASP Top 10 rules"
+      - semgrep scan --config p/owasp-top-ten . --metrics=off --error
