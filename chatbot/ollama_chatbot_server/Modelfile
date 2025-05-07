@@ -1,0 +1,4 @@
+FROM llama-cpp
+
+PARAMETER MODEL_PATH=/models/polyglot-ko-1.3b.Q4_0.gguf
+
