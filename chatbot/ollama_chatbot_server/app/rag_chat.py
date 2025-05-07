@@ -11,6 +11,14 @@ import pickle
 app = FastAPI()
 model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
 
+# 현재 파일 기준 경로 계산
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PICKLE_PATH = os.path.join(BASE_DIR, "doc_texts.pkl")
+
+# 로딩
+with open(PICKLE_PATH, "rb") as f:
+    documents = pickle.load(f)
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "..", "static")  # 📌 상위 디렉토리 기준
 
@@ -23,8 +31,8 @@ async def serve_chat():
 
 # Load vector DB
 index = faiss.read_index("vector_store.index")
-with open("doc_texts.pkl", "rb") as f:
-    doc_texts = pickle.load(f)
+# with open("doc_texts.pkl", "rb") as f:
+#     doc_texts = pickle.load(f)
 
 class Message(BaseModel):
     user_message: str
