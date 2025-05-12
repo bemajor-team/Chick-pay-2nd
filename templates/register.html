@@ -31,17 +31,22 @@
 
             <div>
                 <label for="password1" class="block mb-2 font-semibold text-gray-600">비밀번호</label>
-                <input type="password" id="password1" name="password1" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
-                    placeholder="비밀번호를 입력하세요" required
+                <input type="password" id="password1" name="password1" placeholder="비밀번호를 입력하세요" required
                     class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
             </div>
 
+
             <div>
                 <label for="password2" class="block mb-2 font-semibold text-gray-600">비밀번호 확인</label>
-                <input type="password" id="password2" name="password2" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
-                    placeholder="비밀번호를 다시 입력하세요" required
+                <input type="password" id="password2" name="password2" placeholder="비밀번호를 다시 입력하세요" required
                     class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-chick-orange focus:outline-none transition">
             </div>
+
+            <div class="text-sm font-semibold text-gray-500 mt-3">
+                🔑 비밀번호는 최소 8자 이상이어야 합니다.<br>
+                🔑 숫자,소문자,대문자 각각 1개 이상 포함해야 합니다.<br>
+            </div>
+
 
             <div class="mt-6">
                 <div class="flex items-center mb-4">
@@ -108,12 +113,20 @@
                     let errorMessage = "에러가 발생했습니다.";
                     if (contentType && contentType.includes("application/json")) {
                         const errorData = await response.json();
-                        errorMessage = JSON.stringify(errorData);
+                        // 첫 번째 에러 메시지만 꺼내기
+                        if (typeof errorData === "object") {
+                            const firstField = Object.keys(errorData)[0];
+                            const firstError = errorData[firstField][0];
+                            errorMessage = firstError;
+                        } else {
+                            errorMessage = JSON.stringify(errorData);
+                        }
                     } else {
                         const errorText = await response.text();
                         errorMessage = errorText;
                     }
                     alert("❗ " + errorMessage);
+
                 }
             } catch (error) {
                 alert("요청 실패: " + error.message);

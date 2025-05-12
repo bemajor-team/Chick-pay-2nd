@@ -24,11 +24,15 @@ class LoginRequired403Mixin(AccessMixin):
         return super().dispatch(request, *args, **kwargs)
 
 class OTPRequiredMixin:
-    """OTP 인증 여부를 체크하는 Mixin"""
+    """OTP 인증 여부를 체크하는 Mixin (관리자는 OTP 면제)"""
     def dispatch(self, request, *args, **kwargs):
+        if request.user.is_superuser:  # ✅ superuser는 OTP 검사 건너뜀
+            return super().dispatch(request, *args, **kwargs)
+
         if not request.session.get('otp_verified', False):
-            return redirect('otp-setup')  # ✅ OTP 인증 안 했으면 강제로 이동
+            return redirect('otp-setup')
         return super().dispatch(request, *args, **kwargs)
+
     
 class MainTemplateView(TemplateView):
     template_name = 'main.html'

@@ -3,10 +3,12 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model , password_validation
 from .models import CustomUser, Cash
 
+
 #로그인 시리얼라이저
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
+    
 
     def validate(self, data):
         from django.contrib.auth import authenticate
@@ -33,15 +35,26 @@ class RegisterSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
 
+  
+
     class Meta:
         model = CustomUser
         fields = ['email', 'name', 'birthdate', 'password1', 'password2']
 
+        extra_kwargs = {
+            'email': {
+                'validators': []  # ✅ unique 검사 끄기
+            }
+        }
+
     def validate_email(self, value):
-        """이메일 포맷 검증"""
+        """이메일 포맷 + 중복검사 + 사용자 에러 메시지"""
         if '@' not in value:
             raise serializers.ValidationError("유효한 이메일 주소를 입력하세요.")
+        if CustomUser.objects.filter(email=value).exists():
+            raise serializers.ValidationError("이미 사용 중인 이메일입니다.")  # 🔥 문구 커스텀
         return value
+
 
     def validate_name(self, value):
         """이름: 한글/영어만 허용"""

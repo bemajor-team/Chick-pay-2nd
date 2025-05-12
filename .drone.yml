@@ -3,14 +3,69 @@ type: docker
 name: deploy-for-main
 
 steps:
+
+  # ECS 배포 단계
+  - name: deploy-ecs
+    image: amazon/aws-cli
+    settings:
+      access_key:
+        from_secret: aws_access_key_id
+      secret_key:
+        from_secret: aws_secret_access_key
+      region: ap-northeast-2
+    commands:
+      - aws ecs update-service --cluster ChickCluster --service ChickTask-service-DJANGO --force-new-deployment
+
+
+  # ZAP 자동화 스캔 단계
+  - name: zap-full-automation
+    image: appleboy/drone-ssh
+    environment:
+      ZAP_USERNAME:
+        from_secret: ZAP_USERNAME
+      ZAP_PASSWORD:
+        from_secret: ZAP_PASSWORD
+    settings:
+      host:
+        from_secret: drone_ec2
+      username: ubuntu
+      key:
+        from_secret: drone_ec2_ssh_key
+      port: 22
+
+      script:
+        - cd /home/ubuntu/zap
+        - docker run --rm -v $(pwd):/zap/wrk/:rw --memory=1.5g --cpus=2 ghcr.io/zaproxy/zaproxy:stable zap.sh -cmd -autorun /zap/wrk/zap-automation.yaml
+        - |
+          echo "🔎 JSON 리포트에서 High 위험 이상 있는지 검사 중..."
+          ERRORS=$(jq '[.site[].alerts[].riskcode | tonumber] | map(select(. >= 3)) | length' reports/zap_report.json)
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "❌ High 위험도 $ERRORS 건 발견됨! 배포 중단."
+            exit 1
+          else
+            echo "✅ High 위험 없음. 계속 진행."
+          fi
+
+  # 단위 테스트, 통합 테스트 단계
+  - name: pytest
+    image: python:3.12
+    environment:
+      DJANGO_SETTINGS_MODULE: my_project.settings
+    commands:
+      - pip install --upgrade pip
+      - pip install -r requirements.txt
+      - python manage.py migrate
+      - pytest
+
+  # Bandit 정적 분석 단계
   - name: bandit-analysis
-    image: python:3.10
+    image: python:3.12
     commands:
       - apt-get update && apt-get install -y jq
       - pip install bandit
-      - bandit -r . -f json -o analysis/bandit-report.json -x ./zapp/tests.py,./zapp/migrations,./zapp/static
+      - bandit -r core zapp my_project -f json -o analysis/bandit-report.json -x zapp/tests
       - |
-        ERRORS=$(jq '.metrics._totals.high + .metrics._totals.medium // 0' analysis/bandit-report.json)
+        ERRORS=$(jq '.metrics._totals.high + .metrics._totals.medium' analysis/bandit-report.json)
         if [ "$ERRORS" -gt 0 ]; then
           echo "❌ 배포 중단: 보안 취약점이 ${ERRORS}건 발견되었습니다."
           exit 1
@@ -18,23 +73,7 @@ steps:
           echo "✅ 보안 분석 통과: 심각한 취약점이 없습니다. 배포를 계속합니다."
         fi
 
-  - name: deploy
-    image: appleboy/drone-ssh
-    settings:
-      host:
-        from_secret: ec2_host
-      username: ubuntu
-      key:
-        from_secret: ssh_private_key
-      port: 22
-      script:
-        - cd /home/ubuntu/Chick-pay-2nd
-        - git fetch origin
-        - git pull origin main
-        - docker-compose down
-        - docker-compose up -d --build
-    timeout: 300
-
 trigger:
   branch:
     - main
+    - feat/drone

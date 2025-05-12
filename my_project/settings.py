@@ -33,8 +33,8 @@ resource = Resource(attributes={
 })
 
 from core.secrets import load_aws_secret
-# load_aws_secret("koreano3")
-load_aws_secret("chickpay/prod/credentials")
+load_aws_secret("koreano3")
+# load_aws_secret("chickpay/prod/credentials")
 
 # Tracer 프로바이더 설정
 provider = TracerProvider(resource=resource)
@@ -205,7 +205,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-DEBUG = True
+
+
 
 
 # Internationalization
@@ -223,10 +224,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "https://d13g1etgrsjc85.cloudfront.net/"
 
 #로컬에서도 개발하고 싶으면
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 STATICFILES_DIRS = [
@@ -270,18 +270,6 @@ SESSION_COOKIE_AGE = 1800000000
 
 SESSION_SAVE_EVERY_REQUEST = True
 
-
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",  # 미디어 파일
-    },
-    "staticfiles": {
-        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",  # ✅ 꼭 이걸 써야 static에만 CloudFront 적용됨
-    },
-}
-
-
-
 # AWS 설정
 # AWS 인증 정보 (환경변수로도 설정 가능)
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
@@ -289,19 +277,42 @@ AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
 AWS_S3_SIGNATURE_VERSION = 's3v4'
+
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
-
-STATICFILES_STORAGE = 'storage_backends.StaticStorage'
 AWS_S3_CUSTOM_DOMAIN = 'd13g1etgrsjc85.cloudfront.net'
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
+DEBUG = False
 
-#S3의 URL 설정
-# AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
-# MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
-# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'  # media/ 경로 추가
-# DEFAULT_FILE_STORAGE = 'zapp.storage_backends.MediaStorage'
+# 디버그 설정에 따른 static url 변경
+if DEBUG:
+    STATIC_URL = "/static/"
+else:
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
+# 디버그 설정에 따른 로컬과 ec2 환경 스태틱파일 경로 변경
+if DEBUG:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+
+else:
+    STATICFILES_STORAGE = 'storage_backends.StaticStorage'
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+        },
+    }
 
 

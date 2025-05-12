@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+    <context>
+        <name>ZapContext</name>
+        <desc/>
+        <inscope>true</inscope>
+        <incregexes>https://chick-pay.com/.*</incregexes>
+        <excregexes>.*/zapp/logout/.*</excregexes>
+        <excregexes>.*/zapp/api/logout/.*</excregexes>
+        <tech>
+            <include>Db</include>
+            <include>Db.CouchDB</include>
+            <include>Db.Firebird</include>
+            <include>Db.HypersonicSQL</include>
+            <include>Db.IBM DB2</include>
+            <include>Db.MariaDB</include>
+            <include>Db.Microsoft Access</include>
+            <include>Db.Microsoft SQL Server</include>
+            <include>Db.MongoDB</include>
+            <include>Db.MySQL</include>
+            <include>Db.Oracle</include>
+            <include>Db.PostgreSQL</include>
+            <include>Db.SAP MaxDB</include>
+            <include>Db.SQLite</include>
+            <include>Db.Sybase</include>
+            <include>Language</include>
+            <include>Language.ASP</include>
+            <include>Language.C</include>
+            <include>Language.JSP/Servlet</include>
+            <include>Language.Java</include>
+            <include>Language.Java.Spring</include>
+            <include>Language.JavaScript</include>
+            <include>Language.PHP</include>
+            <include>Language.Python</include>
+            <include>Language.Ruby</include>
+            <include>Language.XML</include>
+            <include>OS</include>
+            <include>OS.Linux</include>
+            <include>OS.MacOS</include>
+            <include>OS.Windows</include>
+            <include>SCM</include>
+            <include>SCM.Git</include>
+            <include>SCM.SVN</include>
+            <include>WS</include>
+            <include>WS.Apache</include>
+            <include>WS.IIS</include>
+            <include>WS.Tomcat</include>
+        </tech>
+        <urlparser>
+            <class>org.zaproxy.zap.model.StandardParameterParser</class>
+            <config>{"kvps":"&amp;","kvs":"=","struct":["csrfmiddlewaretoken"]}</config>
+        </urlparser>
+        <postparser>
+            <class>org.zaproxy.zap.model.StandardParameterParser</class>
+            <config>{"kvps":"&amp;","kvs":"=","struct":[]}</config>
+        </postparser>
+        <authentication>
+            <type>5</type>
+            <strategy>EACH_RESP</strategy>
+            <pollurl/>
+            <polldata/>
+            <pollheaders/>
+            <pollfreq>60</pollfreq>
+            <pollunits>REQUESTS</pollunits>
+            <loggedin>"message":"로그인 성공"</loggedin>
+            <loggedout>"message":"로그아웃"</loggedout>
+            <form>
+                <loginurl>https://chick-pay.com/zapp/api/login/</loginurl>
+                <loginbody>{"email":"{%password%}","password":"{{password}}","csrfmiddlewaretoken":"{{csrfmiddlewaretoken}}"}</loginbody>
+                <loginpageurl>https://chick-pay.com/zapp/login/</loginpageurl>
+            </form>
+        </authentication>
+        <users>
+            <user>2670;true;ZXVuc2FuQGV1bnNhbi5jb20=;5;ZXVuc2FuQGV1bnNhbi5jb20=~MTIzMTIz~</user>
+        </users>
+        <forceduser>2670</forceduser>
+        <session>
+            <type>0</type>
+        </session>
+        <authorization>
+            <type>0</type>
+            <basic>
+                <header/>
+                <body>로그인 필요|권한 없음|Unauthorized|Forbidden </body>
+                <logic>AND</logic>
+                <code>403</code>
+            </basic>
+        </authorization>
+    </context>
+</configuration>
