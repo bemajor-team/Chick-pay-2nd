@@ -1,0 +1,24 @@
+<!-- static/chatbot.html
+<!DOCTYPE html>
+<html>
+<head><title>chick-pay 챗봇</title></head>
+<body>
+  <h2>Chick-Pay Q&A 챗봇</h2>
+  <input id="msg" placeholder="질문을 입력하세요..." />
+  <button onclick="send()">전송</button>
+  <div id="log"></div>
+
+<script>
+async function send() {
+  const message = document.getElementById("msg").value;
+  const res = await fetch("/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_message: message })
+  });
+  const data = await res.json();
+  document.getElementById("log").innerHTML += `<p><b>🧑‍💼:</b> ${message}</p><p><b>🤖:</b> ${data.response}</p>`;
+}
+</script>
+</body>
+</html> -->

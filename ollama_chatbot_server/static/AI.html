@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chick-Pay Chatbot</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FFD700', // 노란색 (기존 색상)
+                        secondary: '#f8f9fa',
+                        dark: '#333333',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    },
+                    animation: {
+                        slideUp: 'slideUp 0.3s ease forwards',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Chatbot Container -->
+    <div id="chatbot-container" class="fixed bottom-5 right-5 z-50 font-sans">
+        <!-- Chatbot Button -->
+        <div id="chatbot-button"
+            class="w-16 h-16 bg-primary rounded-full flex justify-center items-center cursor-pointer shadow-lg transition-transform duration-300 hover:scale-110 text-3xl">
+            🤓
+        </div>
+
+        <!-- Chatbot Window -->
+        <div id="chatbot-window"
+            class="absolute bottom-20 right-0 w-80 h-[400px] bg-white rounded-2xl shadow-xl hidden flex-col overflow-hidden">
+            <div id="chatbot-header"
+                class="bg-primary text-dark px-4 py-3 flex justify-between items-center rounded-t-2xl">
+                <div id="chatbot-title" class="flex items-center font-bold">
+                    <span class="mr-2">🤓</span>
+                    <span>Chick-Pay 챗봇</span>
+                </div>
+                <div id="close-chatbot" class="cursor-pointer text-xl">×</div>
+            </div>
+
+            <div id="chatbot-messages" class="flex-1 p-4 overflow-y-auto flex flex-col">
+                <!-- Messages will be added here dynamically -->
+            </div>
+
+            <div id="chatbot-input" class="flex p-3 border-t border-gray-200">
+                <input type="text" id="user-input" placeholder="질문을 입력하세요..."
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-full outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                <button id="send-button"
+                    class="bg-primary text-dark border-none rounded-full w-10 h-10 ml-2 cursor-pointer flex justify-center items-center hover:bg-yellow-400 transition-colors">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatbotButton = document.getElementById('chatbot-button');
+            const chatbotWindow = document.getElementById('chatbot-window');
+            const closeButton = document.getElementById('close-chatbot');
+            const sendButton = document.getElementById('send-button');
+            const userInput = document.getElementById('user-input');
+            const messagesContainer = document.getElementById('chatbot-messages');
+
+            // Toggle chatbot window
+            chatbotButton.addEventListener('click', function () {
+                if (chatbotWindow.classList.contains('flex')) {
+                    chatbotWindow.classList.remove('flex');
+                    chatbotWindow.classList.add('hidden');
+                } else {
+                    chatbotWindow.classList.remove('hidden');
+                    chatbotWindow.classList.add('flex', 'animate-slideUp');
+
+                    // If this is the first time opening, show welcome message
+                    if (messagesContainer.children.length === 0) {
+                        addBotMessage('안녕하세요! Chick-Pay 챗봇입니다. 무엇을 도와드릴까요?');
+                    }
+
+                    // Focus on input
+                    userInput.focus();
+                }
+            });
+
+            // Close chatbot window
+            closeButton.addEventListener('click', function () {
+                chatbotWindow.classList.remove('flex');
+                chatbotWindow.classList.add('hidden');
+            });
+
+            // Send message on button click
+            sendButton.addEventListener('click', sendMessage);
+
+            // Send message on Enter key
+            userInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // Function to send message
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message) {
+                    // Add user message
+                    addUserMessage(message);
+
+                    // Clear input
+                    userInput.value = '';
+                    // 서버에 POST 요청
+                    fetch("/chat", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            question: message,
+                            support: message.includes("지원금") || message.includes("정부") || message.includes("청년"),
+                            support_mode: message.includes("상세") ? "detail" : "list"
+                        })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.answer) {
+                                addBotMessage(data.answer);
+                            } else if (data.results || data.result) {
+                                const text = JSON.stringify(data.results || data.result, null, 2);
+                                addBotMessage(text);
+                            } else if (data.error) {
+                                addBotMessage("⚠️ 오류: " + data.error);
+                            } else {
+                                addBotMessage("⚠️ 알 수 없는 응답 형식입니다.");
+                            }
+                        })
+                        .catch(err => {
+                            addBotMessage("❌ 서버 오류: " + err.message);
+                        });
+                }
+            }
+
+            // Simulate bot response (after a short delay)
+            // setTimeout(() => {
+            //     const responses = [
+            //         '도움이 필요하신가요?',
+            //         '더 자세한 정보가 필요하시면 알려주세요.',
+            //         '다른 질문이 있으신가요?',
+            //         '잠시만 기다려주세요, 확인 중입니다.',
+            //         '감사합니다! 다른 문의사항이 있으신가요?'
+            //     ];
+            //     const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            //     addBotMessage(randomResponse);
+            // }, 1000);
+        
+
+            // Function to add user message
+            function addUserMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'self-end max-w-[80%] mb-3 px-4 py-2 bg-primary text-dark rounded-2xl rounded-br-md';
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'flex items-start';
+
+                const emojiSpan = document.createElement('span');
+                emojiSpan.className = 'mr-2 text-xl';
+                emojiSpan.textContent = '😊'; // Cute human emoji
+
+                const textSpan = document.createElement('span');
+                textSpan.className = 'flex-1';
+                textSpan.textContent = text;
+
+                contentDiv.appendChild(emojiSpan);
+                contentDiv.appendChild(textSpan);
+                messageDiv.appendChild(contentDiv);
+
+                messagesContainer.appendChild(messageDiv);
+
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // Function to add bot message
+        function addBotMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'self-start max-w-[80%] mb-3 px-4 py-2 bg-gray-100 rounded-2xl rounded-bl-md';
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'flex items-start';
+
+                const emojiSpan = document.createElement('span');
+                emojiSpan.className = 'mr-2 text-xl';
+                emojiSpan.textContent = '🤓'; // Nerd face emoji
+
+                const textSpan = document.createElement('span');
+                textSpan.className = 'flex-1';
+                textSpan.textContent = text;
+
+                contentDiv.appendChild(emojiSpan);
+                contentDiv.appendChild(textSpan);
+                messageDiv.appendChild(contentDiv);
+
+                messagesContainer.appendChild(messageDiv);
+
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        });
+    </script>
+</body>
+
+</html>
