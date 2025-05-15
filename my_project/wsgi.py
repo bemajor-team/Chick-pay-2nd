@@ -15,6 +15,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "my_project.settings")
 
 application = get_wsgi_application()
 
+from opentelemetry.instrumentation.django import DjangoInstrumentor
+DjangoInstrumentor().instrument()
 
 # opentelemetry
 # """

@@ -1,0 +1,16 @@
+receivers:
+  filelog:
+    include: [/app/logs/transactions.log]
+    start_at: beginning
+
+exporters:
+  awscloudwatchlogs:
+    region: ap-northeast-2
+    log_group_name: /django/chickpay
+    log_stream_name: transaction-stream
+
+service:
+  pipelines:
+    logs:
+      receivers: [] # filelog 제거
+      exporters: [awscloudwatchlogs]

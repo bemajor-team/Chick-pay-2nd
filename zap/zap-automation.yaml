@@ -3,7 +3,7 @@ env:
   contexts:
     - name: ZapContext
       urls:
-        - https://chick-pay.com
+        - http://chicktestalb-561931865.ap-northeast-2.elb.amazonaws.com/zapp/
       users:
         - name: myuser
           credentials:

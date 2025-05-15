@@ -15,7 +15,7 @@ if filtered.empty:
     print('❌ "Total" row not found in Locust result.')
     sys.exit(1)
 
-# 평균 응답시간 체크 (1초 = 1000ms)
+# 평균 응답시간 체크 (1초 = 1000ms) #일단 10000초
 avg_response_time = filtered["Average Response Time"].values[0]
 if avg_response_time > 10000:
     print(f"❌ 평균 응답시간 {avg_response_time}ms 초과: 실패")

@@ -6,15 +6,18 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import AccessMixin
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse
 from zapp.models import Cash, CashTransaction, CashTransfer, CustomUser
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 import pyotp , json ,qrcode , base64
 from io import BytesIO
 
+
 @csrf_exempt
 def health_check(request):
-    return HttpResponse("ok")
+    return HttpResponse("OK", content_type="text/plain", status=200)
+
 
 class LoginRequired403Mixin(AccessMixin):
     """로그인 안 했으면 403 Forbidden 터뜨리는 Mixin"""

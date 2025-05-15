@@ -21,7 +21,6 @@ class ChickPayUser(HttpUser):
         if login_response.status_code != 200:
             print(f"❌ 로그인 실패: {self.email} | 응답: {login_response.status_code} | {login_response.text}")
             raise Exception("로그인 실패")
-
         self.session_cookie = login_response.cookies.get('sessionid')
         self.csrf_token = login_response.cookies.get('csrftoken')
 

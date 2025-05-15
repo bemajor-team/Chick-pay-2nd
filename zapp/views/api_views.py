@@ -1,6 +1,7 @@
 # 임시테스트 ▽지워야함 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 
 
 # views_api.py
@@ -9,6 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.db import transaction , IntegrityError
@@ -18,12 +20,14 @@ from zapp.serializers import (
     LoginSerializer,RegisterSerializer, MyPageSerializer,
     CashTransactionSerializer, TransferSerializer, UnregisterPasswordCheckSerializer
 )
-from django.db import transaction
+
 import pyotp
+import logging
+logger = logging.getLogger("transaction")
 
 @csrf_exempt
 def health_check(request):
-    return HttpResponse("ok")
+    return HttpResponse("OK", content_type="text/plain", status=200)
 
 class MainAPIView(APIView):
     def get(self, request):
@@ -154,17 +158,24 @@ class CashTransferAPIView(APIView):
         serializer = TransferSerializer(data=request.data, context={'request': request})
 
         if not serializer.is_valid():
-            return Response(serializer.errors, status=400)  # ✅ 오류는 serializer가 다 들고 있음
+            return Response(serializer.errors, status=400)
 
         sender = request.user
-        receiver = CustomUser.objects.get(email=serializer.validated_data['receiver_email'])  # validate에서 이미 체크 끝났음
+        receiver = CustomUser.objects.get(email=serializer.validated_data['receiver_email'])
         amount = serializer.validated_data['amount']
         memo = serializer.validated_data.get('memo', '')
 
         try:
             with transaction.atomic():
+                # 💡 비즈니스 로직: 잔액 부족
+                if sender.cash.balance < amount:
+                    logger.warning(f"[INSUFFICIENT_FUNDS] user_id={sender.id}, amount={amount}")
+                    raise ValidationError("잔액이 부족합니다.")
+
+                # 💸 실제 송금 처리
                 sender.cash.withdraw(amount)
                 receiver.cash.deposit(amount)
+
 
                 transfer = CashTransfer.objects.create(
                     sender=sender,
@@ -174,15 +185,36 @@ class CashTransferAPIView(APIView):
                 )
 
                 CashTransaction.objects.bulk_create([
-                    CashTransaction(user=sender, transaction_type='transfer', amount=amount, memo=f"{receiver.email}님에게 송금", related_transfer=transfer),
-                    CashTransaction(user=receiver, transaction_type='deposit', amount=amount, memo=f"{sender.email}로부터 입금", related_transfer=transfer),
+                    CashTransaction(
+                        user=sender,
+                        transaction_type='transfer',
+                        amount=amount,
+                        memo=f"{receiver.email}님에게 송금",
+                        related_transfer=transfer
+                    ),
+                    CashTransaction(
+                        user=receiver,
+                        transaction_type='deposit',
+                        amount=amount,
+                        memo=f"{sender.email}로부터 입금",
+                        related_transfer=transfer
+                    ),
                 ])
+
+                logger.info(
+                    f"[TRANSACTION_SUCCESS] transfer_id={transfer.id}, "
+                    f"sender_id={sender.id}, receiver_id={receiver.id}, amount={amount}"
+                )
 
                 return Response({"message": "송금 완료!"}, status=200)
 
         except Exception as e:
+            logger.error(
+                f"[TRANSACTION_FAIL] user_id={sender.id}, "
+                f"receiver_email={serializer.validated_data['receiver_email']}, "
+                f"amount={amount}, error={str(e)}"
+            )
             return Response({"error": "서버 오류가 발생했습니다."}, status=500)
-        
         
 class OTPVerifyAPIView(APIView):
     permission_classes = [IsAuthenticated]
