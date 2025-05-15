@@ -34,8 +34,6 @@ steps:
           {
             "name": "zapp",
             "image": "297195401389.dkr.ecr.ap-northeast-2.amazonaws.com/zapp:${DRONE_TAG}",
-            "cpu": 0,
-            "memory": 0,
             "essential": true,
             "portMappings": [
               {
