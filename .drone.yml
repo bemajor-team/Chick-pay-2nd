@@ -59,16 +59,30 @@ steps:
             --query "services[0].deployments[?status=='PRIMARY'].rolloutState" \
             --output text)
 
-          echo "📦 현재 상태: $status"
+          running=$(aws ecs describe-services \
+            --cluster ChickCluster \
+            --services ChickTask-service-test \
+            --query "services[0].runningCount" \
+            --output text)
 
-          if [ "$status" = "COMPLETED" ]; then
+          desired=$(aws ecs describe-services \
+            --cluster ChickCluster \
+            --services ChickTask-service-test \
+            --query "services[0].desiredCount" \
+            --output text)
+
+          echo "📦 상태: $status, 러닝: $running / 디자이어드: $desired"
+
+          if [ "$status" = "COMPLETED" ] && [ "$running" = "$desired" ]; then
             echo "✅ 새 배포 완료됨!"
             break
           fi
+
           echo "🕐 아직 완료 안됨... 재확인 ($i/30)"
           sleep 5
         done
-        if [ "$status" != "COMPLETED" ]; then
+
+        if [ "$status" != "COMPLETED" ] || [ "$running" != "$desired" ]; then
           echo "❌ ECS 배포 완료 대기 시간 초과"
           exit 1
         fi
