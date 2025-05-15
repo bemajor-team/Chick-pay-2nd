@@ -21,8 +21,7 @@ steps:
       event:
         - tag
       branch:
-        - sub
-        - main
+        - test
 
   # 2. ECS 테스트 업데이트
   - name: deploy-test-ecs
@@ -39,6 +38,39 @@ steps:
       branch:
         - sub
         - main
+
+  # 2-1 ESC 서비스 배포 완료 대기
+  - name: wait-for-test-ecs
+    image: amazon/aws-cli
+    settings:
+      access_key:
+        from_secret: aws_access_key_id
+      secret_key:
+        from_secret: aws_secret_access_key
+      region: ap-northeast-2
+    commands:
+      - |
+        echo "⏳ ECS 서비스 배포 완료 대기 중..."
+        for i in {1..30}; do
+          status=$(aws ecs describe-services \
+            --cluster ChickCluster \
+            --services ChickTask-service-test \
+            --query "services[0].deployments[?status=='PRIMARY'].rolloutState" \
+            --output text)
+
+          echo "📦 현재 상태: $status"
+
+          if [ "$status" = "COMPLETED" ]; then
+            echo "✅ 새 배포 완료됨!"
+            break
+          fi
+          echo "🕐 아직 완료 안됨... 재확인 ($i/30)"
+          sleep 5
+        done
+        if [ "$status" != "COMPLETED" ]; then
+          echo "❌ ECS 배포 완료 대기 시간 초과"
+          exit 1
+        fi
 
   # 3. ZAP 자동화 스캔
   - name: zap-full-automation
@@ -67,6 +99,9 @@ steps:
           else
             echo "✅ High 위험 없음. 계속 진행."
           fi
+    depends_on:
+      - deploy-test-ecs
+
   # 4. 단위/통합 테스트
   - name: pytest
     image: python:3.12
@@ -77,6 +112,7 @@ steps:
       - pip install -r requirements.txt
       - python manage.py migrate
       - pytest
+
   # 5. Bandit 정적 분석
   - name: bandit-analysis
     image: python:3.12
@@ -203,7 +239,4 @@ steps:
 
 trigger:
   branch:
-    # - main
-    # - feat/drone
-    # - feat/infra
-    # - sub
+    - test
