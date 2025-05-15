@@ -23,7 +23,7 @@ steps:
       ref:
         - refs/tags/**test**
 
-    # 2. container-def.json 생성
+  # 2. container-def.json 생성
   - name: generate-task-def
     image: alpine
     commands:
@@ -34,20 +34,19 @@ steps:
           {
             "name": "zapp",
             "image": "297195401389.dkr.ecr.ap-northeast-2.amazonaws.com/zapp:${DRONE_TAG}",
-            "cpu": 256,
-            "memory": 512,
+            "cpu": 0,
+            "memory": 0,
             "essential": true,
             "portMappings": [
               {
                 "containerPort": 8000,
-                "hostPort": 8000,
                 "protocol": "tcp"
               }
             ]
           }
         ]' > container-def.json
 
-  # 3. Task Definition 등록 & ECS 서비스에 반영
+  # 3. Task Definition 등록 & ECS 서비스에 반영 (FARGATE용)
   - name: register-and-deploy
     image: amazon/aws-cli
     settings:
@@ -61,6 +60,12 @@ steps:
         echo "📦 Task Definition 등록 중..."
         aws ecs register-task-definition \
           --family ChickTask \
+          --requires-compatibilities FARGATE \
+          --network-mode awsvpc \
+          --cpu "1024" \
+          --memory "3072" \
+          --execution-role-arn arn:aws:iam::297195401389:role/RealECSRole \
+          --task-role-arn arn:aws:iam::297195401389:role/RealECSRole \
           --container-definitions file://container-def.json
 
         echo "🔍 새 TaskDefinition ARN 가져오기..."
