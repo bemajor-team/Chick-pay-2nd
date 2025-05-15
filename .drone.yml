@@ -110,7 +110,6 @@ steps:
         - tag
       ref:
         - refs/tags/test
-
     depends_on:
       - deploy-test-ecs
 
