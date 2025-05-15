@@ -264,10 +264,7 @@ steps:
     when:
       event:
         - tag
-      branch:
-        - main
-        - sub
 
-trigger:
-  branch:
-    - test
+# trigger:
+#   branch:
+#     - test
