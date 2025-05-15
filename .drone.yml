@@ -107,7 +107,7 @@ steps:
       event:
         - tag
       ref:
-        - refs/tags/test
+        - refs/tags/**test**
 
   # 4. 단위/통합 테스트
   - name: pytest
@@ -122,6 +122,8 @@ steps:
     when:
       event:
         - tag
+      ref:
+        - refs/tags/**test**
 
   # 5. Bandit 정적 분석
   - name: bandit-analysis
@@ -142,7 +144,7 @@ steps:
       event:
         - tag
       ref:
-        - refs/tags/test
+        - refs/tags/**test**
 
     # 6. 부하 테스트 + locust 결과 체크
   - name: locust-load-test
@@ -184,7 +186,7 @@ steps:
       event:
         - tag
       ref:
-        - refs/tags/test
+        - refs/tags/**test**
 
     # 7 Drone UI에서 로그 확인하는 컨테이너
   - name: show-locust-csv
@@ -224,7 +226,7 @@ steps:
       event:
         - tag
       ref:
-        - refs/tags/test
+        - refs/tags/**test**
 
     # 9-1. BLUE 업데이트
   - name: deploy-prod-blue
@@ -241,7 +243,7 @@ steps:
       event:
         - tag
       ref:
-        - refs/tags/test
+        - refs/tags/**test**
 
   # 9-2. GREEN 업데이트
   - name: deploy-prod-green
@@ -257,6 +259,8 @@ steps:
     when:
       event:
         - tag
+      ref:
+        - refs/tags/**test**
 # trigger:
 #   branch:
 #     - test
