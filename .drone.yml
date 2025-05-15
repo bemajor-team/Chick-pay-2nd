@@ -17,11 +17,11 @@ steps:
         - ${DRONE_TAG} # 예: v1.0.0
       dockerfile: dockerfile
       context: .
-    when:
-      event:
-        - tag
-      branch:
-        - test
+    # when:
+    # event:
+    #   - tag
+    # ref:
+    #   - refs/tags/test
 
   # 2. ECS 테스트 업데이트
   - name: deploy-test-ecs
@@ -35,9 +35,10 @@ steps:
     commands:
       - aws ecs update-service --cluster ChickCluster --service ChickTask-service-test --force-new-deployment
     when:
-      branch:
-        - sub
-        - main
+      event:
+        - tag
+      ref:
+        - refs/tags/test
 
   # 2-1 ESC 서비스 배포 완료 대기
   - name: wait-for-test-ecs
@@ -71,6 +72,11 @@ steps:
           echo "❌ ECS 배포 완료 대기 시간 초과"
           exit 1
         fi
+    when:
+      event:
+        - tag
+      ref:
+        - refs/tags/test
 
   # 3. ZAP 자동화 스캔
   - name: zap-full-automation
@@ -99,6 +105,12 @@ steps:
           else
             echo "✅ High 위험 없음. 계속 진행."
           fi
+    when:
+      event:
+        - tag
+      ref:
+        - refs/tags/test
+
     depends_on:
       - deploy-test-ecs
 
@@ -112,6 +124,11 @@ steps:
       - pip install -r requirements.txt
       - python manage.py migrate
       - pytest
+    when:
+      event:
+        - tag
+      ref:
+        - refs/tags/test
 
   # 5. Bandit 정적 분석
   - name: bandit-analysis
@@ -128,6 +145,11 @@ steps:
         else
           echo "✅ 보안 분석 통과: 심각한 취약점이 없습니다. 계속 진행합니다."
           fi
+    when:
+      event:
+        - tag
+      ref:
+        - refs/tags/test
 
     # 6. 부하 테스트 + locust 결과 체크
   - name: locust-load-test
@@ -165,6 +187,11 @@ steps:
         echo "📤 DB 커넥션 로그 출력 ==============================="
         cat db_conn_log.txt
       - python check_locust_result.py
+    when:
+      event:
+        - tag
+      ref:
+        - refs/tags/test
 
     # 7 Drone UI에서 로그 확인하는 컨테이너
   - name: show-locust-csv
@@ -200,6 +227,11 @@ steps:
           echo "❌ conn_count가 숫자가 아님 → '$conn_count'"
           exit 1
         fi
+    when:
+      event:
+        - tag
+      ref:
+        - refs/tags/test
 
     # 9-1. BLUE 업데이트
   - name: deploy-prod-blue
@@ -215,9 +247,8 @@ steps:
     when:
       event:
         - tag
-      branch:
-        - main
-        - sub
+      ref:
+        - refs/tags/test
 
   # 9-2. GREEN 업데이트
   - name: deploy-prod-green
