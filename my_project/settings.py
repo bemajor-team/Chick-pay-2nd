@@ -135,7 +135,7 @@ LOGGING = {
 
 
 
-# Cross-Domain Misconfiguration 관련
+# Cross-Domain Misconfiguration 관련 !
 
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
