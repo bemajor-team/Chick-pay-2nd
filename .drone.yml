@@ -17,11 +17,11 @@ steps:
         - ${DRONE_TAG} # 예: v1.0.0
       dockerfile: dockerfile
       context: .
-    # when:
-    # event:
-    #   - tag
-    # ref:
-    #   - refs/tags/test
+    when:
+      event:
+        - tag
+      ref:
+        - refs/tags/**test**
 
   # 2. ECS 테스트 업데이트
   - name: deploy-test-ecs
@@ -38,7 +38,7 @@ steps:
       event:
         - tag
       ref:
-        - refs/tags/test
+        - refs/tags/**test**
 
   # 2-1 ESC 서비스 배포 완료 대기
   - name: wait-for-test-ecs
@@ -75,8 +75,6 @@ steps:
     when:
       event:
         - tag
-      ref:
-        - refs/tags/test
 
   # 3. ZAP 자동화 스캔
   - name: zap-full-automation
@@ -110,8 +108,6 @@ steps:
         - tag
       ref:
         - refs/tags/test
-    depends_on:
-      - deploy-test-ecs
 
   # 4. 단위/통합 테스트
   - name: pytest
@@ -126,8 +122,6 @@ steps:
     when:
       event:
         - tag
-      ref:
-        - refs/tags/test
 
   # 5. Bandit 정적 분석
   - name: bandit-analysis
@@ -263,7 +257,6 @@ steps:
     when:
       event:
         - tag
-
 # trigger:
 #   branch:
 #     - test
