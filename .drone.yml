@@ -16,9 +16,12 @@ steps:
       tags:
         - latest
         - ${DRONE_COMMIT_SHA}
+        - ${DRONE_TAG} # 예: v1.0.0
       dockerfile: dockerfile
       context: .
     when:
+      event:
+        - tag
       branch:
         - sub
         - main
@@ -176,6 +179,8 @@ steps:
     commands:
       - aws ecs update-service --cluster ChickCluster --service ChickTask-service-blue --force-new-deployment
     when:
+      event:
+        - tag
       branch:
         - main
         - sub
@@ -192,6 +197,8 @@ steps:
     commands:
       - aws ecs update-service --cluster ChickCluster --service ChickTask-service-green --force-new-deployment
     when:
+      event:
+        - tag
       branch:
         - main
         - sub
